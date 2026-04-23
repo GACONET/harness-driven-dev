@@ -7,16 +7,6 @@
 
   const STATUSES = ["todo", "in-progress", "done"];
 
-  // ── Linear API ──
-
-  function getLinearConfig() {
-    // API key must be set in .env — never hardcode secrets in source code
-    return {
-      endpoint: "https://api.linear.app/graphql",
-      configured: typeof process !== "undefined" && process.env && process.env.LINEAR_API_KEY
-    };
-  }
-
   // ── State ──
 
   function loadTasks() {
@@ -69,7 +59,7 @@
 
     if (idx > 0) {
       var leftBtn = document.createElement("button");
-      leftBtn.textContent = "\u2190";
+      leftBtn.textContent = "←";
       leftBtn.title = "Move to " + STATUSES[idx - 1];
       leftBtn.addEventListener("click", function () {
         moveTask(task.id, STATUSES[idx - 1]);
@@ -79,7 +69,7 @@
 
     if (idx < STATUSES.length - 1) {
       var rightBtn = document.createElement("button");
-      rightBtn.textContent = "\u2192";
+      rightBtn.textContent = "→";
       rightBtn.title = "Move to " + STATUSES[idx + 1];
       rightBtn.addEventListener("click", function () {
         moveTask(task.id, STATUSES[idx + 1]);
@@ -89,7 +79,7 @@
 
     var delBtn = document.createElement("button");
     delBtn.className = "delete-btn";
-    delBtn.textContent = "\u00d7";
+    delBtn.textContent = "×";
     delBtn.title = "Delete";
     delBtn.addEventListener("click", function () {
       deleteTask(task.id);
@@ -142,19 +132,6 @@
     render();
   }
 
-  function filterTasks(query) {
-    var searchInput = document.getElementById("search-input");
-    var term = (query || searchInput.value || "").toLowerCase();
-    STATUSES.forEach(function (status) {
-      var list = document.getElementById("list-" + status);
-      var cards = list.querySelectorAll(".task-card");
-      cards.forEach(function (card) {
-        var title = card.querySelector(".task-title").textContent.toLowerCase();
-        card.style.display = title.indexOf(term) !== -1 ? "" : "none";
-      });
-    });
-  }
-
   // ── Event listeners ──
 
   document.getElementById("add-task-btn").addEventListener("click", function () {
@@ -162,10 +139,6 @@
     addTask(input.value);
     input.value = "";
     input.focus();
-  });
-
-  document.getElementById("search-input").addEventListener("input", function () {
-    filterTasks();
   });
 
   document.getElementById("new-task-input").addEventListener("keydown", function (e) {
