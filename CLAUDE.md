@@ -11,13 +11,14 @@ through automated enforcement.
 
 ## Skills
 
-The agent has 4 skills that connect with the harness:
+The agent has 5 skills that connect with the harness:
 
 | Skill | When to use |
 |-------|-------------|
 | `/create-issue <title>` | Create a new issue in Linear with acceptance criteria. |
 | `/start-issue DEMO-X` | ALWAYS before writing code. Reads Linear issue, creates branch, moves to In Progress. |
 | `/close-issue DEMO-X` | ALWAYS to finish work. Runs 3 gates (tests + CI + criteria), posts evidence, moves to Done. |
+| `/fix-secret` | When gitleaks blocks a commit. Moves the secret to env, asks the user to populate `.env`, WAITS for confirmation before retrying. |
 | `/status` | Check project dashboard: issues, branch, CI status. |
 
 > **Note**: `DEMO-X` is used as an example. Replace with your actual Linear team key prefix (e.g., `HAR-5`, `EXP-1`). The team key is set when you create your team in Linear.
@@ -29,8 +30,24 @@ The agent has 4 skills that connect with the harness:
    NEVER use `Closes`, `Fixes`, or `Resolves` — they bypass harness gates.
 3. **Mechanical Definition of Done**: Use `/close-issue` to close issues.
    NEVER close manually in Linear. The harness runs 3 gates first.
-4. **No secrets in code**: gitleaks blocks commits with secrets automatically.
+4. **No secrets in code**: gitleaks blocks commits with secrets
+   automatically. When it blocks, follow the **Secret Blocked Flow**
+   below — never bypass it with `--no-verify`.
 5. **Evidence always**: Every issue closure includes an audit trail comment in Linear.
+
+## Secret Blocked Flow
+
+When gitleaks blocks a commit because a secret was hardcoded, run the
+`/fix-secret` skill. This flow is mandatory and non-negotiable:
+
+1. Remove the secret from the code; read it from an environment variable.
+2. Ensure `.env.example` documents the variable name (placeholder only).
+3. **Ask the user to put the real value in `.env`, then STOP.**
+4. **WAIT for the user's explicit confirmation** that `.env` is ready.
+   The agent MUST NOT retry the commit before this confirmation.
+5. Retry the commit (now clean) and continue (push → PR → `/close-issue`).
+
+The agent NEVER reads, writes, or creates `.env` — the user owns secrets.
 
 ## Commit Message Format
 
