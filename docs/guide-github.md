@@ -79,7 +79,7 @@ The repo includes 2 workflows that run automatically:
 4. If a bridge bug already exists, adds a comment instead of duplicating
 
 **To verify it works:**
-- This only runs when CI fails — you'll see it in action during the demo when a secret gets pushed
+- This only runs when CI fails — you can test it by pushing an intentionally failing test
 
 ## 4. Configure GitHub Pages
 
@@ -189,7 +189,7 @@ The Linear-GitHub webhook detects issue identifiers in branch names to auto-link
 
 ## 8. Repository Settings (recommended)
 
-### 8.1 Branch Protection (optional for demo)
+### 8.1 Branch Protection (optional)
 
 1. Go to **Settings** → **Branches** → **Add rule**
 2. Branch name pattern: `main`

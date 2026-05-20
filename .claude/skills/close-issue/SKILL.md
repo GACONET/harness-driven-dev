@@ -1,6 +1,6 @@
 ---
 name: close-issue
-description: Close a Linear issue with evidence — runs 3 gates (tests, CI, acceptance criteria) before closing
+description: Close a Linear issue with evidence — runs 4 gates (tests, CI, PR approval, acceptance criteria) before closing
 user-invocable: true
 allowed-tools: Bash(git *) Bash(gh *) Bash(npm test*) Bash(python3 scripts/*) Bash(bash scripts/*)
 argument-hint: "<ISSUE_ID> (e.g., DEMO-1)"
@@ -16,10 +16,11 @@ Close Linear issue `$ARGUMENTS` with mechanical verification.
    ```bash
    bash scripts/close_issue.sh $0
    ```
-   This runs 3 gates:
+   This runs 4 gates:
    - **Gate 1**: Tests passing? (`npm test`)
    - **Gate 2**: CI green? (`gh run list`)
-   - **Gate 3**: Acceptance criteria all checked? (Linear API)
+   - **Gate 3**: PR explicitly approved by a human reviewer? (`gh pr view --json reviewDecision`)
+   - **Gate 4**: Acceptance criteria all checked? (Linear API)
 
 2. **If ALL gates pass**:
    The script automatically:

@@ -116,7 +116,7 @@ Plus ~50 lines across YAML configs. The entire enforcement system is under 800 l
 
 ### Can I add more best practices?
 
-Yes. The project identifies 12 industry best practices. The demo covers 5. To add more:
+Yes. The project identifies 12 industry best practices. This repo includes 5 implemented. To add more:
 
 1. Write a validation script in `scripts/`
 2. Add it as a gate in `close_issue.sh` or as a hook

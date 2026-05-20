@@ -2,10 +2,11 @@
 #
 # close_issue.sh — Harness gate script for closing Linear issues.
 #
-# Runs 3 gates before allowing an issue to be closed:
+# Runs 4 gates before allowing an issue to be closed:
 #   Gate 1: Tests passing (npm test)
 #   Gate 2: CI green (last GitHub Actions run)
-#   Gate 3: Acceptance criteria checked (Linear API)
+#   Gate 3: PR explicitly approved by a human reviewer (Layer 5)
+#   Gate 4: Acceptance criteria checked (Linear API)
 #
 # Usage:
 #   bash scripts/close_issue.sh DEMO-1
@@ -34,11 +35,11 @@ echo "========================================"
 echo ""
 
 GATES_PASSED=0
-GATES_TOTAL=3
+GATES_TOTAL=4
 
 # ── Gate 1: Tests ──
 
-echo -n "Gate 1/3 — Tests passing... "
+echo -n "Gate 1/4 — Tests passing... "
 if npm test --silent 2>/dev/null; then
     echo -e "${GREEN}PASS${NC}"
     GATES_PASSED=$((GATES_PASSED + 1))
@@ -49,7 +50,7 @@ fi
 
 # ── Gate 2: CI Green ──
 
-echo -n "Gate 2/3 — CI green... "
+echo -n "Gate 2/4 — CI green... "
 if command -v gh &>/dev/null; then
     BRANCH=$(git branch --show-current 2>/dev/null || echo "")
     if [ -n "$BRANCH" ]; then
@@ -73,9 +74,30 @@ else
     GATES_PASSED=$((GATES_PASSED + 1))
 fi
 
-# ── Gate 3: Acceptance Criteria ──
+# ── Gate 3: PR Approval (Layer 5) ──
 
-echo -n "Gate 3/3 — Acceptance criteria... "
+echo -n "Gate 3/4 — PR approval... "
+PR_APPROVER=""
+PR_GATE_STATUS="unknown"
+if bash "$SCRIPT_DIR/gates/gate_pr_approval.sh" 2>/tmp/pr_gate_msg; then
+    cat /tmp/pr_gate_msg
+    PR_GATE_STATUS=$(grep -oE 'PASS|FAIL|SKIP' /tmp/pr_gate_msg | head -1 || echo "PASS")
+    PR_APPROVER=$(grep -oE 'approved by @[a-zA-Z0-9_-]+' /tmp/pr_gate_msg | sed 's/approved by //' || echo "")
+    GATES_PASSED=$((GATES_PASSED + 1))
+else
+    EXIT_CODE=$?
+    cat /tmp/pr_gate_msg
+    PR_GATE_STATUS=$(grep -oE 'PASS|FAIL|SKIP' /tmp/pr_gate_msg | head -1 || echo "FAIL")
+    if [ "$EXIT_CODE" -eq 3 ]; then
+        # SKIP (env limitation, not a real failure)
+        GATES_PASSED=$((GATES_PASSED + 1))
+    fi
+fi
+rm -f /tmp/pr_gate_msg
+
+# ── Gate 4: Acceptance Criteria ──
+
+echo -n "Gate 4/4 — Acceptance criteria... "
 ISSUE_DATA=$(python3 "$SCRIPT_DIR/linear_client.py" get "$ISSUE_ID" --full 2>/dev/null || echo "")
 if [ -z "$ISSUE_DATA" ]; then
     echo -e "${YELLOW}SKIP (could not fetch issue)${NC}"
@@ -213,7 +235,8 @@ ${FILES_CHANGED}
 
 - **Gate 1 — Tests**: PASS (${TESTS_PASSED})
 - **Gate 2 — CI/CD**: ${CI_STATUS_TEXT}$([ -n "$CI_RUN_LINK" ] && echo " — ${CI_RUN_LINK}")
-- **Gate 3 — Acceptance Criteria**: PASS (${AC_CHECKED}/${AC_TOTAL} checked)
+- **Gate 3 — PR Approval**: ${PR_GATE_STATUS}$([ -n "$PR_APPROVER" ] && echo " (approved by ${PR_APPROVER})")
+- **Gate 4 — Acceptance Criteria**: PASS (${AC_CHECKED}/${AC_TOTAL} checked)
 
 ### 5. Audit Trail
 
