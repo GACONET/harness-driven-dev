@@ -79,7 +79,7 @@ El repo incluye 2 workflows que corren automáticamente:
 4. Si ya existe un bug de bridge, agrega un comentario en vez de duplicar
 
 **Para verificar que funciona:**
-- Solo corre cuando CI falla — puedes probarlo haciendo push de un test que falle intencionalmente
+- Solo corre cuando CI falla — lo verás en acción durante el demo cuando se haga push de un secret
 
 ## 4. Configurar GitHub Pages
 
@@ -189,7 +189,7 @@ El webhook Linear-GitHub detecta identificadores de issues en nombres de branch 
 
 ## 8. Configuración del Repositorio (recomendado)
 
-### 8.1 Branch Protection (opcional)
+### 8.1 Branch Protection (opcional para demo)
 
 1. Ve a **Settings** → **Branches** → **Add rule**
 2. Branch name pattern: `main`

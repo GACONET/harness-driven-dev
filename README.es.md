@@ -38,7 +38,7 @@ El agente no solo escribe código — **hace cumplir automáticamente las reglas
 > **Nota**: `DEMO-X` se usa como ejemplo de prefijo de issue en todo este documento. Reemplaza con la clave de tu equipo en Linear (ej., `HAR-1`, `EXP-1`). El prefijo lo determina la clave del team que eliges al crear tu equipo en Linear.
 
 ```
-TÚ (4 comandos):                    EL SISTEMA (20+ acciones automáticas):
+TÚ (3 comandos):                    EL SISTEMA (15+ acciones automáticas):
 ─────────────────                    ──────────────────────────────────────
 1. /start-issue DEMO-1        →     Lee Linear, crea branch,
                                      mueve a In Progress
@@ -48,36 +48,29 @@ TÚ (4 comandos):                    EL SISTEMA (20+ acciones automáticas):
                                      hooks validan secrets + ref,
                                      push + PR
 
-3. /review-pr DEMO-1          →     Revisa el diff vs criterios de aceptación,
-                                     posta checklist en la PR.
-                                     NUNCA auto-aprueba.
-
-4. /close-issue DEMO-1        →     Corre 4 gates (tests, CI, PR approval,
-                                     criterios), posta evidencia, mueve
-                                     a Done, audit trail
+3. /close-issue DEMO-1        →     Corre 3 gates, posta evidencia,
+                                     mueve a Done, audit trail
 ```
 
-## 6 Capas de Enforcement
+## 4 Capas de Enforcement
 
-```mermaid
-flowchart TB
-    bug([Un bug intenta llegar a main])
-    bug --> L1
-    L1[Capa 1: Pre-commit<br/>gitleaks + issue-ref hook<br/>Bloquea código malo localmente]
-    L1 --> L2
-    L2[Capa 2: CI<br/>GitHub Actions + gitleaks<br/>Falla la PR + auto-crea bug en Linear]
-    L2 --> L3
-    L3[Capa 3: Harness gates<br/>close_issue.sh tests + criterios<br/>Sin evidencia no hay cierre]
-    L3 --> L4
-    L4[Capa 4: Webhook<br/>Linear &harr; GitHub<br/>Estado se sincroniza solo]
-    L4 --> L5
-    L5[Capa 5: PR Approval<br/>gh pr view --json reviewDecision<br/>El agente nunca se auto-aprueba]
-    L5 --> L6
-    L6[Capa 6: Session Stop<br/>stop_gate.sh en Stop hook<br/>Reporta commits sin push, Refs faltantes]
-    L6 --> main([main])
 ```
+Capa 1: Pre-commit (laptop del dev)
+  └─ gitleaks + issue-ref hook
+  └─ "No te deja commitear mal"
 
-Cada capa es independiente. Un bug debe atravesar las seis para llegar a `main`.
+Capa 2: CI (GitHub Actions)
+  └─ Tests + gitleaks
+  └─ "Si falla, auto-crea bug en Linear"
+
+Capa 3: Harness (agente IA)
+  └─ close_issue.sh con gates
+  └─ "No te deja cerrar sin evidencia"
+
+Capa 4: Webhook (GitHub → Linear)
+  └─ PR → In Progress, merge → Done
+  └─ "El estado se sincroniza solo"
+```
 
 ## Inicio Rápido
 
@@ -132,28 +125,19 @@ Cada feature es un issue de Linear. El harness hace cumplir el ciclo de vida com
 ```
 harness-driven-dev/
 ├── .claude/
-│   ├── settings.json              # Permisos + hooks Pre/Stop
+│   ├── settings.json              # Permisos + hooks
 │   └── skills/
-│       ├── create-issue/SKILL.md  # Comando /create-issue
 │       ├── start-issue/SKILL.md   # Comando /start-issue
-│       ├── review-pr/SKILL.md     # Comando /review-pr (nunca auto-aprueba)
-│       ├── close-issue/SKILL.md   # Comando /close-issue (4 gates)
+│       ├── close-issue/SKILL.md   # Comando /close-issue
 │       └── status/SKILL.md        # Comando /status
 ├── .github/workflows/
 │   ├── ci.yml                     # Tests + escaneo de secrets
 │   └── linear-bridge.yml          # CI failure → bug en Linear
 ├── scripts/
 │   ├── linear_client.py           # Cliente GraphQL para Linear
-│   ├── close_issue.sh             # Orquestador de 4 gates
-│   ├── gates/
-│   │   └── gate_pr_approval.sh    # Gate de Capa 5
-│   ├── stop_gate.sh               # Gate de Capa 6 (Stop hook)
+│   ├── close_issue.sh             # Verificación de 3 gates
 │   ├── check_issue_ref.sh         # Hook de commit message
-│   ├── ci_failure_bridge.py       # Bridge CI → Linear
-│   └── seed_demo.sh               # Semilla idempotente para los 3 demos
-├── docs/
-│   ├── diagrams/                  # Mermaid + draw.io editables
-│   └── slides-devopsdays/         # Presentación de la charla
+│   └── ci_failure_bridge.py       # Bridge CI → Linear
 ├── tests/test_app.js              # Tests DOM (jsdom)
 ├── CLAUDE.md                      # Reglas del agente + skills
 ├── index.html                     # Task Board UI
@@ -196,21 +180,6 @@ Solución: Cliente GraphQL propio (~380 líneas)
 
 Mensaje: "Automatiza con APIs, no con abstracciones mágicas."
 ```
-
-## Qué te llevas si haces fork
-
-Un harness completo, MIT-licensed, que puedes correr en menos de 15 minutos:
-
-- **6 skills** (`/create-issue`, `/start-issue`, `/review-pr`, `/close-issue`, `/new-runbook`, `/status`) copiables a cualquier proyecto Claude Code
-- **2 plantillas de runbook** (`runbooks/templates/`) para respuesta a incidentes y deployments manuales — adapta a tu stack en minutos
-- **6 capas de enforcement** con scripts concretos que puedes auditar línea por línea
-- **3 runbooks de demo** que prueban que el harness funciona en tu propio fork
-- **Diagramas editables** ([Mermaid](docs/diagrams/mermaid/) + [draw.io](docs/diagrams/drawio/)) — adapta la arquitectura a tu stack
-- **Plantilla de `CLAUDE.md`** con placeholders para tu team key, stack y reglas
-- **Guía de migración** (30/60/90 días) para introducir HDD en un equipo existente sin big bang
-- **FAQ de objeciones** con las 15 preguntas más duras que un ingeniero DevOps va a hacer
-
-> **Promesa**: clona el repo, sigue el [Quick Start de 15 minutos](docs/quick-start-15min.md) y tienes un harness funcional hoy. No teoría — código.
 
 ## Contribuir
 

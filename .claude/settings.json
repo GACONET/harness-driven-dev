@@ -11,8 +11,6 @@
       "Skill(create-issue *)",
       "Skill(start-issue *)",
       "Skill(close-issue *)",
-      "Skill(review-pr *)",
-      "Skill(new-runbook *)",
       "Skill(status)"
     ]
   },
@@ -25,18 +23,6 @@
             "type": "command",
             "command": "echo 'Reminder: commit message must contain Refs DEMO-XXX'",
             "timeout": 5000
-          }
-        ]
-      }
-    ],
-    "Stop": [
-      {
-        "matcher": "*",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "bash scripts/stop_gate.sh 2>/dev/null || true",
-            "timeout": 10000
           }
         ]
       }

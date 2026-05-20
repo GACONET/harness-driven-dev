@@ -40,13 +40,13 @@ To check or edit states:
 
 ## 4. Create a Project (optional)
 
-Projects group related issues.
+Projects group related issues. For the demo:
 
 1. Go to **Linear → Projects** (left sidebar)
 2. Click **+ Create project**
 3. Configure:
-   - **Name**: your project name (e.g., `HDD Demo`)
-   - **Team**: your team
+   - **Name**: `HDD Demo`
+   - **Team**: `Demo`
    - **Status**: Active
 4. Click **Create**
 
@@ -63,7 +63,7 @@ The API key allows the harness scripts to interact with Linear. **You need this 
 
 ## 6. Save the API Key
 
-### Locally (for development)
+### Locally (for development and demo)
 
 ```bash
 # Copy the example file
@@ -101,15 +101,15 @@ gh secret set LINEAR_API_KEY
 4. Click **Add secret**
 5. You should see `LINEAR_API_KEY` listed under Repository secrets
 
-## 7. Create Example Issues
+## 7. Create Demo Issues
 
-The repo includes a Task Board where you can practice the full harness flow. Here are 3 suggested features — each one is small enough to implement in minutes, but complete enough to exercise all the gates.
+The demo uses 3 simple features for the Task Board. Each one is small enough to implement in minutes, but complex enough to show the full harness flow.
 
-| Issue | What it does | What it exercises in the harness |
-|-------|-------------|----------------------------------|
-| **Add dark mode toggle** | Adds a button to switch between light and dark themes | Full flow: commit → pre-commit hooks → CI → close with evidence |
-| **Add task counter per column** | Shows "To Do (3)" instead of just "To Do" in column headers | Quick cycle: `/start-issue` → code → `/close-issue` |
-| **Add drag and drop** | Lets users drag tasks between columns instead of clicking arrows | More complex feature that exercises multiple commits and gates |
+| Issue | What it does | Why it's in the demo |
+|-------|-------------|---------------------|
+| **Add dark mode toggle** | Adds a button to switch between light and dark themes | Perfect for the "secret blocked" moment — the agent writes a toggle and we test the full commit → hook → CI flow |
+| **Add task counter per column** | Shows "To Do (3)" instead of just "To Do" in column headers | Quick feature that demonstrates `/start-issue` → code → `/close-issue` without drama |
+| **Add drag and drop** | Lets users drag tasks between columns instead of clicking arrows | More complex feature, good for showing that the harness scales |
 
 Now that you have the API key configured, you can create these issues from Claude Code, via CLI, or manually.
 
@@ -118,7 +118,7 @@ Now that you have the API key configured, you can create these issues from Claud
 Start Claude Code in the project directory and tell the agent:
 
 ```
-Create the 3 example issues
+Create the 3 demo issues
 ```
 
 Or create them one by one:
@@ -217,7 +217,7 @@ This adds a **Reviews** section to the Linear sidebar where you can see all open
 
 ### Troubleshooting: Multiple Linear Workspaces on the Same GitHub Account
 
-**The problem**: Linear's GitHub App can only be installed once per GitHub account/organization. If you have two Linear workspaces (e.g., `ExpertIA` for work and `Harness Driven Dev` for this project) using the same GitHub account, you'll get this error:
+**The problem**: Linear's GitHub App can only be installed once per GitHub account/organization. If you have two Linear workspaces (e.g., `ExpertIA` for work and `Harness Driven Dev` for this demo) using the same GitHub account, you'll get this error:
 
 > *"Error while connecting with GitHub. Unable to connect with GitHub. Make sure you haven't connected another Linear account with this GitHub installation."*
 

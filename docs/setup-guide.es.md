@@ -146,15 +146,15 @@ El agente leerá `CLAUDE.md` y tendrá acceso a 4 skills:
 - `/close-issue DEMO-X` — Cerrar con evidencia
 - `/status` — Dashboard del proyecto
 
-## 7. Setup del Proyecto en Linear
+## 7. Setup del Proyecto en Linear (para Demos)
 
-1. Crea un **Team** en Linear (ej., "Demo") — la clave del team será el prefijo de tus issues
+1. Crea un **Team** en Linear (ej., "Demo")
 2. Crea un **Project** (ej., "HDD Demo")
-3. Crea issues de ejemplo para practicar el flujo (ver [Guía de Linear - Sección 7](guide-linear.es.md#7-crear-issues-de-ejemplo)):
-   - "Add dark mode toggle"
-   - "Add task counter per column"
-   - "Add drag and drop between columns"
-4. Verifica que todos los issues estén en estado **To Do**
+3. Crea 3 issues:
+   - `DEMO-1`: "Add dark mode toggle"
+   - `DEMO-2`: "Add task counter per column"
+   - `DEMO-3`: "Add drag and drop between columns"
+4. Pon todos los issues en estado **To Do**
 
 ## 8. Convención de Nombres de Branch
 

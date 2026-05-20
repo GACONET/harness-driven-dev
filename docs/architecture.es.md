@@ -97,8 +97,6 @@ graph LR
 
 ## Sistema de Gates (close_issue.sh)
 
-El orquestador `close_issue.sh` corre 4 gates secuenciales. Fallar uno bloquea el cierre.
-
 ```mermaid
 flowchart TD
     START["/close-issue DEMO-1"] --> G1{"Gate 1<br/>¿Tests pasan?"}
@@ -107,16 +105,12 @@ flowchart TD
     G1R -->|FAIL| BLOCKED["BLOQUEADO<br/>Arregla los tests"]
 
     G2 -->|"gh run list"| G2R{Resultado}
-    G2R -->|PASS| G3{"Gate 3<br/>¿PR aprobada?"}
+    G2R -->|PASS| G3{"Gate 3<br/>¿Acceptance criteria?"}
     G2R -->|FAIL| BLOCKED2["BLOQUEADO<br/>Arregla el CI"]
 
-    G3 -->|"gh pr view --json reviewDecision"| G3R{Resultado}
-    G3R -->|PASS| G4{"Gate 4<br/>¿Acceptance criteria?"}
-    G3R -->|FAIL| BLOCKED3["BLOQUEADO<br/>Espera la aprobación humana"]
-
-    G4 -->|"Linear API"| G4R{Resultado}
-    G4R -->|PASS| CLOSE["TODOS LOS GATES PASAN"]
-    G4R -->|FAIL| BLOCKED4["BLOQUEADO<br/>Completa criterios en Linear"]
+    G3 -->|"Linear API"| G3R{Resultado}
+    G3R -->|PASS| CLOSE["TODOS LOS GATES PASAN"]
+    G3R -->|FAIL| BLOCKED3["BLOQUEADO<br/>Completa criterios en Linear"]
 
     CLOSE --> EVIDENCE["Posta comentario de evidencia"]
     EVIDENCE --> DONE["Mueve issue a Done"]
@@ -125,14 +119,11 @@ flowchart TD
     style BLOCKED fill:#f85149,color:#fff
     style BLOCKED2 fill:#f85149,color:#fff
     style BLOCKED3 fill:#f85149,color:#fff
-    style BLOCKED4 fill:#f85149,color:#fff
     style CLOSE fill:#238636,color:#fff
     style DONE fill:#238636,color:#fff
 ```
 
-## 6 Capas de Enforcement
-
-Un bug debe atravesar las seis capas independientes para llegar a `main`.
+## 4 Capas de Enforcement
 
 ```mermaid
 graph TB
@@ -147,90 +138,23 @@ graph TB
     end
 
     subgraph L3["Capa 3: Harness (Agente)"]
-        L3A["close_issue.sh"] --> L3B["4 gates"]
+        L3A["close_issue.sh"] --> L3B["3 gates"]
         L3B --> L3C["Evidencia + audit trail"]
     end
 
-    subgraph L4["Capa 4: Webhook (GitHub ↔ Linear)"]
+    subgraph L4["Capa 4: Webhook (GitHub → Linear)"]
         L4A["PR abierto → In Progress"]
         L4B["PR merged → Done"]
-    end
-
-    subgraph L5["Capa 5: PR Approval (humano en el loop)"]
-        L5A["/review-pr → comentario checklist"]
-        L5B["gate_pr_approval.sh → gh pr view"]
-        L5A --> L5B
-    end
-
-    subgraph L6["Capa 6: Session Stop (higiene)"]
-        L6A["stop_gate.sh"]
-        L6B["Commits sin push, Refs faltantes, PRs sin review"]
-        L6A --> L6B
     end
 
     L1 -->|"si se bypasea (--no-verify)"| L2
     L2 -->|"antes de cerrar"| L3
     L3 -->|"en eventos de PR"| L4
-    L4 -->|"requiere sello humano"| L5
-    L5 -->|"al cerrar sesión"| L6
 
     style L1 fill:#238636,color:#fff
     style L2 fill:#d29922,color:#0d1117
     style L3 fill:#58a6ff,color:#0d1117
     style L4 fill:#8b949e,color:#0d1117
-    style L5 fill:#8957e5,color:#fff
-    style L6 fill:#bc4c00,color:#fff
-```
-
-## Flujo de Aprobación de PR (Capa 5)
-
-El agente nunca se auto-aprueba. Prepara una revisión sustantiva con `/review-pr`; un humano estampa APPROVED.
-
-```mermaid
-sequenceDiagram
-    actor Dev as Desarrollador
-    participant CC as Claude Code
-    participant GH as GitHub
-    actor Rev as Reviewer Humano
-
-    Dev->>CC: /review-pr DEMO-1
-    CC->>GH: gh pr diff + gh pr checks
-    CC->>CC: arma checklist de auto-revisión
-    CC->>GH: gh pr comment (NO --approve)
-    CC-->>Dev: "Revisión publicada. Esperando aprobación humana."
-
-    Rev->>GH: Lee PR + checklist
-    Rev->>GH: gh pr review --approve
-    GH-->>Rev: reviewDecision = APPROVED
-
-    Dev->>CC: /close-issue DEMO-1
-    CC->>GH: gate_pr_approval.sh → ¿reviewDecision?
-    GH-->>CC: APPROVED
-    CC->>CC: Gate 3 PASS → continúa a Gate 4
-```
-
-## Session Stop Gate (Capa 6)
-
-Corre al final de cada sesión de Claude Code. Reporta — no bloquea — estado inconsistente.
-
-```mermaid
-flowchart LR
-    STOP[Termina sesión] --> SG[stop_gate.sh]
-    SG --> C1{¿Commits sin push?}
-    SG --> C2{¿Branch sin PR?}
-    SG --> C3{¿Último commit sin Refs?}
-    SG --> C4{¿PR abierta sin aprobar?}
-    C1 -->|sí| W1[warn]
-    C2 -->|sí| W2[warn]
-    C3 -->|sí| W3[warn]
-    C4 -->|sí| W4[warn]
-    C1 -->|no| OK1[ok]
-    C2 -->|no| OK2[ok]
-    C3 -->|no| OK3[ok]
-    C4 -->|no| OK4[ok]
-
-    style STOP fill:#58a6ff,color:#0d1117
-    style SG fill:#bc4c00,color:#fff
 ```
 
 ## Flujo de Datos: End to End
@@ -274,7 +198,7 @@ sequenceDiagram
     CC-->>Dev: "DEMO-1 cerrado con evidencia."
 ```
 
-## Flujo del Secret Bloqueado
+## Flujo del Secret Bloqueado (el "Momento Wow")
 
 ```mermaid
 sequenceDiagram

@@ -116,7 +116,7 @@ Más ~50 líneas de configs YAML. Todo el sistema de enforcement tiene menos de 
 
 ### ¿Puedo agregar más buenas prácticas?
 
-Sí. El proyecto identifica 12 buenas prácticas de la industria. Este repo incluye 5 implementadas. Para agregar más:
+Sí. El proyecto identifica 12 buenas prácticas de la industria. El demo cubre 5. Para agregar más:
 
 1. Escribe un script de validación en `scripts/`
 2. Agrégalo como gate en `close_issue.sh` o como hook
