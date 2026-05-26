@@ -9,30 +9,12 @@
 
   // ── Linear API ──
 
-  const LINEAR_ENDPOINT = "https://api.linear.app/graphql";
-
-  function getLinearApiKey() {
-    // API key is read from the environment — never hardcode secrets in source code
-    return (typeof process !== "undefined" && process.env && process.env.LINEAR_API_KEY) || "";
-  }
-
   function getLinearConfig() {
+    // API key must be set in .env — never hardcode secrets in source code
     return {
-      endpoint: LINEAR_ENDPOINT,
-      configured: Boolean(getLinearApiKey())
+      endpoint: "https://api.linear.app/graphql",
+      configured: typeof process !== "undefined" && process.env && process.env.LINEAR_API_KEY
     };
-  }
-
-  function fetchLinearViewer() {
-    const apiKey = getLinearApiKey();
-    return fetch(LINEAR_ENDPOINT, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": apiKey
-      },
-      body: JSON.stringify({ query: "{ viewer { id name email } }" })
-    }).then(function (res) { return res.json(); });
   }
 
   // ── State ──
@@ -50,7 +32,6 @@
   }
 
   let tasks = loadTasks();
-  let searchQuery = "";
 
   // ── Rendering ──
 
@@ -120,19 +101,12 @@
     return card;
   }
 
-  function filterTasks(taskList) {
-    var q = searchQuery.trim().toLowerCase();
-    if (!q) return taskList;
-    return taskList.filter(function (t) {
-      return t.title.toLowerCase().indexOf(q) !== -1;
-    });
-  }
-
   function render() {
     STATUSES.forEach(function (status) {
       var list = document.getElementById("list-" + status);
       list.innerHTML = "";
-      filterTasks(tasks.filter(function (t) { return t.status === status; }))
+      tasks
+        .filter(function (t) { return t.status === status; })
         .forEach(function (t) { list.appendChild(createCard(t)); });
     });
     updateCounts();
@@ -182,11 +156,6 @@
       addTask(this.value);
       this.value = "";
     }
-  });
-
-  document.getElementById("search-input").addEventListener("input", function () {
-    searchQuery = this.value;
-    render();
   });
 
   // ── Drag and Drop ──
