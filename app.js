@@ -50,7 +50,6 @@
   }
 
   let tasks = loadTasks();
-  let searchQuery = "";
 
   // ── Rendering ──
 
@@ -120,19 +119,12 @@
     return card;
   }
 
-  function filterTasks(taskList) {
-    var q = searchQuery.trim().toLowerCase();
-    if (!q) return taskList;
-    return taskList.filter(function (t) {
-      return t.title.toLowerCase().indexOf(q) !== -1;
-    });
-  }
-
   function render() {
     STATUSES.forEach(function (status) {
       var list = document.getElementById("list-" + status);
       list.innerHTML = "";
-      filterTasks(tasks.filter(function (t) { return t.status === status; }))
+      tasks
+        .filter(function (t) { return t.status === status; })
         .forEach(function (t) { list.appendChild(createCard(t)); });
     });
     updateCounts();
@@ -182,11 +174,6 @@
       addTask(this.value);
       this.value = "";
     }
-  });
-
-  document.getElementById("search-input").addEventListener("input", function () {
-    searchQuery = this.value;
-    render();
   });
 
   // ── Drag and Drop ──
