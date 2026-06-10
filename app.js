@@ -160,18 +160,6 @@
     render();
   }
 
-  function clearCompleted() {
-    var doneCount = tasks.filter(function (t) { return t.status === "done"; }).length;
-    if (doneCount === 0) return;
-    if (typeof window !== "undefined" && typeof window.confirm === "function") {
-      var msg = "Eliminar " + doneCount + " tarea" + (doneCount === 1 ? "" : "s") + " completada" + (doneCount === 1 ? "" : "s") + "?";
-      if (!window.confirm(msg)) return;
-    }
-    tasks = tasks.filter(function (t) { return t.status !== "done"; });
-    saveTasks(tasks);
-    render();
-  }
-
   // ── Event listeners ──
 
   document.getElementById("add-task-btn").addEventListener("click", function () {
@@ -187,8 +175,6 @@
       this.value = "";
     }
   });
-
-  document.getElementById("clear-completed-btn").addEventListener("click", clearCompleted);
 
   // ── Drag and Drop ──
 
