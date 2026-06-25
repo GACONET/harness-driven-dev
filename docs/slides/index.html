@@ -1,804 +1,1066 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>HDD — Slides</title>
+  <title>Shift-Left Meets Agentic AI · HDD</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/theme/black.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/highlight/monokai.css">
   <script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js"></script>
-  <style>
-    :root {
-      --r-background-color: #0d1117;
-      --r-main-color: #c9d1d9;
-      --r-heading-color: #f0f6fc;
-      --r-link-color: #58a6ff;
-    }
-    .reveal { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
-    .reveal h1, .reveal h2, .reveal h3 { text-transform: none; letter-spacing: -0.02em; }
-    .reveal h1 { font-size: 2.4em; }
-    .reveal h2 { font-size: 1.6em; }
-    .reveal .subtitle { color: #8b949e; font-size: 0.9em; }
-    .reveal code { color: #58a6ff; }
-    .reveal pre { width: 100%; }
-    .reveal pre code { font-size: 0.75em; line-height: 1.6; }
-
-    .reveal table { margin: 0 auto; font-size: 0.7em; border-collapse: collapse; }
-    .reveal table th, .reveal table td { padding: 0.5em 1em; border: 1px solid #21262d; }
-    .reveal table th { background: #161b22; }
-
-    .green { color: #238636; }
-    .red { color: #f85149; }
-    .yellow { color: #d29922; }
-    .blue { color: #58a6ff; }
-    .purple { color: #8957e5; }
-    .muted { color: #8b949e; }
-
-    .layer-box {
-      background: #161b22;
-      border: 1px solid #21262d;
-      border-radius: 8px;
-      padding: 0.6em 1em;
-      margin: 0.4em 0;
-      text-align: left;
-      font-size: 0.75em;
-      display: flex;
-      align-items: baseline;
-      gap: 0.5em;
-    }
-
-    .layer-num { flex-shrink: 0; width: 1.5em; font-weight: 700; }
-    .layer-name { flex-shrink: 0; white-space: nowrap; font-weight: 700; }
-    .layer-desc { color: #8b949e; }
-
-    .flow-row {
-      display: flex;
-      align-items: center;
-      gap: 1em;
-      margin: 0.5em 0;
-      font-size: 0.8em;
-    }
-    .flow-cmd { color: #58a6ff; font-family: monospace; white-space: nowrap; }
-    .flow-arrow { color: #8b949e; }
-    .flow-desc { color: #c9d1d9; text-align: left; }
-
-    /* ── Diagram styles ── */
-    .diagram-flow {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 0.2em;
-      margin: 0.8em 0;
-      flex-wrap: nowrap;
-    }
-
-    .d-node {
-      background: #161b22;
-      border: 2px solid #30363d;
-      border-radius: 8px;
-      padding: 0.3em 0.6em;
-      font-size: 0.55em;
-      text-align: center;
-      min-width: 70px;
-    }
-
-    .d-node-accent { border-color: #58a6ff; }
-    .d-node-green { border-color: #238636; }
-    .d-node-red { border-color: #f85149; }
-    .d-node-yellow { border-color: #d29922; }
-    .d-node-purple { border-color: #8957e5; }
-
-    .d-arrow {
-      color: #8b949e;
-      font-size: 0.9em;
-      flex-shrink: 0;
-    }
-
-    .d-arrow-down {
-      color: #8b949e;
-      font-size: 0.8em;
-      text-align: center;
-      margin: 0;
-      line-height: 1;
-    }
-
-    .d-label {
-      font-size: 0.55em;
-      color: #8b949e;
-      margin-top: 0.1em;
-    }
-
-    .d-node strong {
-      display: block;
-      color: #f0f6fc;
-      font-size: 1em;
-    }
-
-    /* System architecture diagram */
-    .arch-diagram {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 0.15em;
-    }
-
-    .arch-row {
-      display: flex;
-      gap: 0.5em;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .arch-box {
-      background: #161b22;
-      border: 2px solid #30363d;
-      border-radius: 6px;
-      padding: 0.2em 0.5em;
-      text-align: center;
-    }
-
-    .arch-box strong { color: #f0f6fc; }
-
-    /* Gate visual */
-    .gate-visual {
-      display: flex;
-      flex-direction: column;
-      gap: 0.35em;
-      max-width: 520px;
-      margin: 0.3em auto;
-    }
-
-    .gate-row {
-      display: flex;
-      align-items: center;
-      gap: 0.4em;
-      font-size: 0.48em;
-    }
-
-    .gate-icon {
-      width: 22px;
-      height: 22px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: 700;
-      font-size: 0.8em;
-      flex-shrink: 0;
-      border: 2px solid;
-    }
-
-    .gate-icon-pass { border-color: #238636; color: #238636; }
-    .gate-icon-pending { border-color: #30363d; color: #8b949e; }
-
-    .gate-bar {
-      flex: 1;
-      background: #21262d;
-      border-radius: 4px;
-      height: 26px;
-      display: flex;
-      align-items: center;
-      padding: 0 0.6em;
-      justify-content: space-between;
-      white-space: nowrap;
-      overflow: hidden;
-    }
-
-    .gate-bar-fill {
-      position: relative;
-    }
-
-    .gate-result {
-      font-weight: 700;
-    }
-
-    /* Before/After visual */
-    .comparison {
-      display: flex;
-      gap: 2em;
-      justify-content: center;
-      align-items: stretch;
-    }
-
-    .comparison-col {
-      flex: 1;
-      max-width: 400px;
-      background: #161b22;
-      border: 1px solid #21262d;
-      border-radius: 8px;
-      padding: 1.2em;
-      text-align: left;
-    }
-
-    .comparison-col h3 { margin-bottom: 0.6em; }
-
-    .comp-item {
-      display: flex;
-      align-items: center;
-      gap: 0.5em;
-      margin: 0.4em 0;
-      font-size: 0.75em;
-    }
-
-    .comp-icon {
-      width: 24px;
-      height: 24px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 0.7em;
-      flex-shrink: 0;
-    }
-
-    .comp-icon-red { background: rgba(248,81,73,0.15); color: #f85149; }
-    .comp-icon-green { background: rgba(35,134,54,0.15); color: #238636; }
-
-    /* Secret flow visual */
-    .secret-flow {
-      display: flex;
-      flex-direction: column;
-      gap: 0.6em;
-      max-width: 800px;
-      margin: 0 auto;
-      font-size: 0.7em;
-    }
-
-    .sf-step {
-      display: flex;
-      align-items: center;
-      gap: 0.6em;
-      background: #161b22;
-      border: 1px solid #21262d;
-      border-radius: 8px;
-      padding: 0.6em 1em;
-    }
-
-    .sf-num {
-      width: 28px;
-      height: 28px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: 700;
-      font-size: 0.85em;
-      flex-shrink: 0;
-      border: 2px solid #30363d;
-      color: #8b949e;
-    }
-
-    .sf-content { flex: 1; }
-    .sf-result { font-weight: 700; flex-shrink: 0; font-size: 0.9em; }
-
-    .lang-toggle {
-      position: fixed;
-      top: 1rem;
-      right: 1rem;
-      background: #161b22;
-      border: 1px solid #21262d;
-      border-radius: 6px;
-      padding: 0.3rem 0.75rem;
-      font-size: 0.8rem;
-      z-index: 100;
-      color: #c9d1d9;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    }
-    .lang-toggle a { color: #58a6ff; text-decoration: none; cursor: pointer; }
-    .lang-toggle a:hover { text-decoration: underline; }
-  </style>
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+  <div class="reveal">
+    <div class="slides">
 
-<div class="lang-toggle">
-  <strong>EN</strong> &middot; <a onclick="toggleLang()">ES</a>
-</div>
+      <!-- ════════════════════════════════════════════════════════════════
+           A — APERTURA · 4 slides · ~5 min
+           Objetivo: conectar (TED: vulnerabilidad + pregunta + promesa)
+           ════════════════════════════════════════════════════════════════ -->
 
-<div class="reveal">
-<div class="slides">
+      <!-- Slide 1 — Título minimal -->
+      <section>
+        <div class="title-slide">
+          <h1 class="title-main">Shift-Left meets<br/><span class="accent">Agentic AI</span></h1>
+          <p class="title-sub muted">Harness-Driven Development</p>
+          <div class="qr-pair">
+            <div class="qr-block">
+              <div id="qr-linkedin" class="qr-code"></div>
+              <p class="qr-label">Conectemos<br/><span class="muted small">LinkedIn · Felipe Rangel</span></p>
+            </div>
+            <div class="qr-block">
+              <div id="qr-title" class="qr-code"></div>
+              <p class="qr-label">El repo<br/><span class="muted small">github.com/felirangelp/harness-driven-dev</span></p>
+            </div>
+          </div>
+        </div>
+        <aside class="notes">
+**⏱ 60 segundos · Energía: alta · Centro del escenario**
 
-<!-- ── Slide 1: Title ── -->
-<section>
-  <h1>Harness-Driven<br><span class="blue">Development</span></h1>
-  <p class="subtitle" data-en="Orchestrating Linear + GitHub with AI Agents" data-es="Orquestando Linear + GitHub con Agentes IA">Orchestrating Linear + GitHub with AI Agents</p>
-  <div style="display:flex; align-items:center; justify-content:center; gap:1em; margin-top:1.5em;">
-    <div id="linkedin-qr" style="background:#fff; padding:6px; border-radius:6px; line-height:0;"></div>
-    <p style="font-size:0.65em; color:#8b949e; margin:0;" data-en="by <a href='https://www.linkedin.com/in/felirangelp/' style='color:#58a6ff;'>Felipe Rangel</a>" data-es="por <a href='https://www.linkedin.com/in/felirangelp/' style='color:#58a6ff;'>Felipe Rangel</a>">
-      by <a href="https://www.linkedin.com/in/felirangelp/" style="color:#58a6ff;">Felipe Rangel</a>
-    </p>
+ENTRADA: Camino al centro, pauso 3 segundos antes de hablar. Contacto visual con 3 personas en distintos puntos de la sala.
+
+DIGO:
+"Buenas tardes."
+*(pausa de 2 segundos)*
+"Mi nombre es Felipe Rangel. Hoy quiero hablarles de algo que probablemente les ha quitado el sueño más de una vez."
+*(pausa)*
+"Una pregunta antes de empezar..."
+
+NO digo el título — está en pantalla. NO leo el QR — lo voy a usar al final.
+
+TRANSICIÓN: "Levanten la mano si..."
+
+---
+
+**📖 SI ALGUIEN PREGUNTA "¿QUÉ SIGNIFICA SHIFT-LEFT MEETS AGENTIC AI?"**
+
+Respuesta corta (10 segundos):
+> "Dejamos de pedirle a los humanos que cumplan las reglas. Se las damos a un agente que SÍ las cumple — mecánicamente, sin presión, sin atajos."
+
+Respuesta extendida (60 segundos):
+
+**Shift-Left** (Larry Smith, 2001): mover la detección de problemas lo más temprano posible en el ciclo de vida. Pre-commit > CI > staging > prod. Cuanto antes detectas, 10x más barato.
+
+**Agentic AI**: IA que no solo genera código — actúa. Lee el issue, crea la rama, escribe, testea, abre la PR, posta evidencia. Autónoma.
+
+**El meets (el insight)**:
+- Shift-left tradicional falla porque los humanos saltan los controles bajo presión (`--no-verify`, "lo arreglo después").
+- Agentic AI empeora el problema: el agente escribe 500 líneas en 2 minutos, nadie revisa a esa velocidad.
+- Síntesis: **usar al agente mismo como ejecutor mecánico del shift-left**. El agente hace cumplir lo que los humanos no cumplen. Y crucialmente: el agente NO se auto-aprueba (Capa 5) — ahí el humano todavía manda.
+        </aside>
+      </section>
+
+      <!-- Slide 2 — Apertura con vulnerabilidad / conexión -->
+      <section data-background-video="assets/video_meme.mp4"
+               data-background-video-loop
+               data-background-video-muted
+               data-background-size="contain">
+        <aside class="notes">
+**⏱ 60-75 segundos · Energía: alta · Movimiento al frente · Auto-play del video**
+
+ENTRO EN SILENCIO. Dejo que corra el video.
+
+EL PÚBLICO SE RÍE (5-7 segundos).
+*(espero a que decaiga la risa, NO la atropello)*
+
+DIGO (en cuanto la sala se calma):
+"Esto es lo que la mayoría de equipos hoy llama 'enforcement'."
+
+*(pausa de 2 segundos, miro al público)*
+
+"Code review de IA: una palmadita, un 'looks good to me', y a producción."
+
+*(pausa)*
+
+"Y la culpa NO es nuestra. Lo voy a defender en los próximos 60 minutos."
+
+*(reveal del caption con fragment)*
+
+CLAVES:
+- El chiste es sobre la INDUSTRIA, no sobre nadie en la sala. Yo estoy en el chiste también.
+- Humor visual cruza idioma → garantía de risa universal.
+- No me defiendo, no me disculpo por el meme. Lo presento, lo dejo respirar.
+
+SI EL VIDEO FALLA: cae al GIF automáticamente. Si AMBOS fallan, yo describo la escena con la mano ("imagínense una requisa de aeropuerto... pero el guardia solo pasa la mano por encima del abrigo. Eso es nuestro code review hoy.").
+
+TRANSICIÓN: "Pero hay una pregunta más incómoda..."
+        </aside>
+      </section>
+
+      <!-- Slide 3 — Ley de los controles saltables (reframe estratégico) -->
+      <section>
+        <h2 class="big-question">Cada control que se <span class="accent">puede saltar</span>...<br/><span class="fragment">se salta.</span></h2>
+        <p class="fragment red big-question-tail">Eventualmente. Bajo presión. Por alguien.</p>
+        <aside class="notes">
+**⏱ 75 segundos · Energía: media-alta · Quieto en centro · Lectura pausada**
+
+DIGO (lentamente, leyendo la primera línea):
+"Cada control que se puede saltar..."
+*(pausa de 3 segundos — dejo que el público termine de leer)*
+
+*(click — aparece 'se salta')*
+"...se salta."
+*(pausa larga, 4 segundos)*
+
+*(click — aparece la línea roja con las 3 condiciones)*
+"Eventualmente."
+*(pausa 1s)*
+"Bajo presión."
+*(pausa 1s)*
+"Por alguien."
+*(pausa larga, 5 segundos — esto debe doler un poco)*
+
+DESPUÉS DE LA PAUSA:
+"El `--no-verify` que alguien hizo a las 11 de la noche. El `git push --force` 'rapidito'. El 'LGTM' a una PR de 800 líneas en 30 segundos."
+*(pausa)*
+"Cada uno de esos es un control que se pudo saltar. Y se saltó."
+
+ESTE ES EL REFRAME CENTRAL. Casi una ley física. Es el hilo conductor.
+Esta declaración funciona sola — no la re-anclo formalmente, pero el público debe llevársela.
+
+NO doy la solución todavía. Dejo la tensión.
+
+TÉCNICA TED: reframe-como-ley > pregunta abstracta. El público técnico reconoce la verdad al instante ("esto es EXACTAMENTE lo que pasa en mi equipo").
+
+TRANSICIÓN: "En la próxima hora voy a defender una idea..."
+        </aside>
+      </section>
+
+      <!-- Slide 4 — La promesa / línea argumental (15 palabras) -->
+      <section>
+        <blockquote class="throughline">
+          La calidad no debería depender de la voluntad.<br/>
+          <span class="accent">Debería ser el comportamiento por defecto.</span>
+        </blockquote>
+        <p class="fragment muted throughline-sub">Y un agente IA puede hacer que eso pase.</p>
+        <aside class="notes">
+**⏱ 60 segundos · Energía: media · Pausa, mirada al público**
+
+DIGO:
+"En la próxima hora voy a defender una idea."
+*(pausa)*
+"Léanla conmigo."
+*(silencio mientras leen)*
+*(después de 5 segundos)*
+"La calidad no debería depender de la voluntad. Debería ser el comportamiento por defecto."
+*(click para revelar la línea de IA)*
+"Y un agente IA puede hacer que eso pase."
+
+ESTA ES LA LÍNEA ARGUMENTAL EN 15 PALABRAS. Es mi promesa al público.
+
+Vamos a hacer un viaje:
+1. Por qué pasa esto (contexto)
+2. Cómo se resuelve (concepto)
+3. Cómo se ve funcionando (demos)
+4. Cómo lo replican mañana (acción)
+
+TRANSICIÓN: "Empecemos por entender el problema."
+        </aside>
+      </section>
+
+      <!-- ════════════════════════════════════════════════════════════════
+           B — ¿POR QUÉ IMPORTA? · 3 slides · ~10 min
+           Objetivo: instalar la urgencia (¿qué? por qué)
+           ════════════════════════════════════════════════════════════════ -->
+
+      <!-- Slide 5 — La brecha know/do/enforce (versión completa, 5 filas) -->
+      <section>
+        <h2 class="problem-title">El Problema</h2>
+        <table class="gap-table-clean">
+          <thead>
+            <tr>
+              <th class="green">Lo que SABEMOS</th>
+              <th class="yellow">Lo que HACEMOS</th>
+              <th class="red">Lo que se CUMPLE</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>Convenciones de commits</td><td>A veces</td><td>Casi nunca</td></tr>
+            <tr><td>No secrets en el código</td><td>Después del incidente</td><td>Esporádicamente</td></tr>
+            <tr><td>Tests antes de merge</td><td>En proyectos nuevos</td><td>Hasta que hay presión</td></tr>
+            <tr><td>Issues trazables</td><td>En PRs "importantes"</td><td>Cuando hay auditoría</td></tr>
+            <tr><td>Definición de Terminado</td><td>En retros</td><td class="red">Nunca mecánicamente</td></tr>
+          </tbody>
+        </table>
+        <aside class="notes">
+**⏱ 90 segundos · Energía: media · Señalo la tabla, NO leo cada fila**
+
+DIGO:
+"Miren esta tabla. Cinco prácticas. Todos las conocemos. Todos las enseñamos."
+*(pausa)*
+"Columna 1: lo que SABEMOS. Columna 2: lo que realmente HACEMOS. Columna 3: lo que el sistema EFECTIVAMENTE hace cumplir."
+*(pausa, miro al público)*
+*(señalo la última fila)*
+"Definition of Done: la mencionamos en cada retro. ¿Y mecánicamente? Nunca."
+*(pausa larga)*
+"El gap no está entre saber y no saber. El gap está entre SABER y HACER. Y entre HACER y CUMPLIR."
+
+NO leo cada fila. El público las lee solo (la verde rápido, la amarilla con curiosidad, la roja con dolor). Yo doy el cierre.
+
+TRANSICIÓN: "Y ese gap tiene un costo concreto."
+        </aside>
+      </section>
+
+      <!-- Slide 6 — El número que duele -->
+      <section>
+        <div class="big-number">
+          <span class="num red">7,600</span>
+          <p class="num-label">dólares</p>
+          <p class="num-sub muted">cuesta detectar un bug en producción</p>
+        </div>
+        <p class="fragment big-number-comparison">
+          <span class="green">80 USD</span> si lo atrapas antes del commit
+        </p>
+        <p class="fragment small muted">— IBM, 2020</p>
+        <aside class="notes">
+**⏱ 60 segundos · Energía: media · Quieto, dejo que el número cale**
+
+DIGO:
+"Siete mil seiscientos dólares."
+*(pausa larga)*
+"Eso es lo que cuesta, en promedio, detectar un bug en producción."
+*(click para revelar)*
+"¿Saben cuánto cuesta detectarlo antes del commit? Ochenta."
+*(pausa)*
+"Estos números son de un estudio de IBM. Son conservadores. Para tu equipo probablemente son más altos."
+*(pausa)*
+"95 veces más barato. Por bug. Por mes. Multiplicado por todos los developers de tu equipo."
+
+NO discuto la metodología del estudio. NO defiendo el número. Lo presento, dejo que el cerebro lo procese.
+
+TRANSICIÓN: "Entonces, ¿por qué no lo estamos haciendo?"
+        </aside>
+      </section>
+
+      <!-- Slide 7 — Por qué falla el enforcement humano -->
+      <section>
+        <h2 class="section-title">¿Por qué falla?</h2>
+        <ul class="three-reasons">
+          <li class="fragment"><strong>Olvidamos.</strong></li>
+          <li class="fragment"><strong>Nos cansamos.</strong></li>
+          <li class="fragment"><strong>Tenemos presión.</strong></li>
+        </ul>
+        <p class="fragment footnote">El cumplimiento humano es <em class="red">incompatible</em> con ser humano.</p>
+        <aside class="notes">
+**⏱ 75 segundos · Energía: media · Movimiento lento al revelar cada razón**
+
+DIGO:
+"Hay tres razones por las que el enforcement humano falla. Las tres son universales."
+*(click 1)*
+"Olvidamos. El equipo crece, la gente rota, las reglas se diluyen."
+*(click 2)*
+"Nos cansamos. A las cuatro de la tarde del viernes, nadie quiere revisar checkboxes."
+*(click 3)*
+"Tenemos presión. El cliente espera. El sprint termina hoy."
+*(pausa)*
+*(click 4 — revelo conclusión)*
+"El enforcement humano es incompatible con ser humano."
+
+ESTA FRASE ES MEMORABLE. La gente la va a citar. Tweets, posts. Por eso es minimal.
+
+TRANSICIÓN: "Entonces, ¿qué necesitamos?"
+        </aside>
+      </section>
+
+      <!-- ════════════════════════════════════════════════════════════════
+           C — CONCEPTOS PRINCIPALES · 4 slides · ~12 min
+           Objetivo: instalar el modelo mental del harness
+           ════════════════════════════════════════════════════════════════ -->
+
+      <!-- Slide 8 — El carácter de un harness (analogía cinturón = qué TIPO de sistema es) -->
+      <section>
+        <h2 class="section-title">El <span class="accent">carácter</span> de un harness</h2>
+        <blockquote class="harness-quote">
+          "El agente no solo escribe código —<br/>
+          <span class="accent">hace cumplir automáticamente</span> las reglas<br/>
+          que tu equipo ya conoce<br/>
+          pero no logra seguir consistentemente."
+        </blockquote>
+        <p class="fragment analogy-line">Como un cinturón de seguridad.</p>
+        <aside class="notes">
+**⏱ 90 segundos · Energía: media · Lectura pausada de la cita · Gesto con manos al hablar de mecánico**
+
+**ROL NARRATIVO DE ESTE SLIDE**: hablamos del CARÁCTER del harness (qué tipo de sistema es: no juzga, no se cansa, no se distrae). En 3 slides vamos a hablar de los COMPONENTES concretos (Skills, CLAUDE.md, Scripts, Hooks). Son dos ángulos distintos del mismo concepto — no son redundantes, son refuerzo intencional.
+
+**⚠ MALDICIÓN DEL CONOCIMIENTO** (Robin Hogarth, libro TED cap. Explicación):
+El público sabe CI/CD, pre-commit, GraphQL. Pero NO necesariamente sabe Claude Code, agentic AI, MCP, skills. Tengo que asumir MENOS sobre la parte del agente.
+**Regla de oro**: cada concepto nuevo se construye sobre algo que ya conocen.
+Por eso uso la analogía del CINTURÓN — todos manejan, todos lo conocen.
+
+DIGO:
+"Antes de hablar de los componentes... hablemos del CARÁCTER de un harness."
+*(pausa, miro a la cita)*
+
+LEO LA CITA (pausada, énfasis en 'hace cumplir automáticamente'):
+"El agente no solo escribe código..."
+*(pausa)*
+"...hace cumplir automáticamente las reglas que tu equipo ya conoce, pero no logra seguir consistentemente."
+*(pausa larga, 4 segundos)*
+
+*(click — aparece el cinturón)*
+"Es como un cinturón de seguridad."
+*(pausa)*
+"El cinturón no te impide manejar. No te juzga. No depende de tu estado de ánimo. Pero si lo intentas evitar, te molesta hasta que cedes."
+*(pausa)*
+"Ese es el CARÁCTER del harness: mecánico, paciente, persistente."
+
+ANALOGÍA CONCRETA. TED enseña: usen objetos físicos que todos conocen.
+
+EVITAR: jerga técnica todavía. No menciono Claude, Linear, GitHub. Eso viene después.
+
+TRANSICIÓN: "Y este harness tiene 6 capas."
+        </aside>
+      </section>
+
+      <!-- Slide 9 — Las 6 capas (visual hero) -->
+      <section>
+        <h2 class="section-title">6 capas de defensa</h2>
+        <div class="layers-stack">
+          <div class="layer-row layer-1"><span class="layer-no">1</span><span class="layer-label">Pre-commit</span></div>
+          <div class="layer-row layer-2"><span class="layer-no">2</span><span class="layer-label">CI</span></div>
+          <div class="layer-row layer-3"><span class="layer-no">3</span><span class="layer-label">Harness gates</span></div>
+          <div class="layer-row layer-4"><span class="layer-no">4</span><span class="layer-label">Webhook</span></div>
+          <div class="layer-row layer-5"><span class="layer-no">5</span><span class="layer-label">PR Approval</span></div>
+          <div class="layer-row layer-6"><span class="layer-no">6</span><span class="layer-label">Session Stop</span></div>
+        </div>
+        <p class="fragment footnote">Un bug debe atravesar <strong class="accent">las 6</strong> para llegar a <code>main</code>.</p>
+        <aside class="notes">
+**⏱ 90 segundos · Energía: media · Señalo cada capa al nombrarla**
+
+DIGO:
+"Seis capas. No voy a explicar cada una en detalle ahora — eso viene en los demos. Solo quiero que tengan la imagen mental."
+*(señalo capa 1)*
+"Capa 1: pre-commit. En tu laptop, antes de que el commit exista."
+*(capa 2)*
+"Capa 2: CI. Por si pre-commit se bypassea."
+*(capa 3)*
+"Capa 3: gates del harness. No cierras issue sin pasar validaciones."
+*(capa 4)*
+"Capa 4: webhook. Linear y GitHub se sincronizan solos."
+*(capa 5)*
+"Capa 5: PR approval. Esto lo van a recordar — el agente nunca se auto-aprueba."
+*(capa 6)*
+"Capa 6: session stop. Higiene cuando cierras la sesión."
+*(click final)*
+"Un bug debe atravesar las seis para llegar a main."
+
+NO entro en detalles. Las 6 capas se viven en los demos.
+
+TRANSICIÓN: "De las seis, una es la que diferencia esta charla."
+        </aside>
+      </section>
+
+      <!-- Slide 10 — Arquitectura simple (técnica, antes del clímax emocional) -->
+      <section>
+        <h2 class="section-title">Tres sistemas, un flujo</h2>
+        <div class="arch-simple">
+          <div class="arch-node arch-purple"><strong>Linear</strong><span class="arch-label">planeación</span></div>
+          <span class="arch-edge">↔</span>
+          <div class="arch-node arch-dark"><strong>GitHub</strong><span class="arch-label">código</span></div>
+          <span class="arch-edge">↔</span>
+          <div class="arch-node arch-orange"><strong>Claude</strong><span class="arch-label">hace cumplir</span></div>
+        </div>
+        <p class="footnote">Tú das <strong class="accent">4 comandos</strong>. El sistema ejecuta <strong class="accent">20+ acciones</strong>.</p>
+        <aside class="notes">
+**⏱ 60 segundos · Energía: media**
+
+DIGO:
+"La arquitectura es deliberadamente simple. Tres sistemas."
+*(señalo cada uno)*
+"Linear donde vive el planning. GitHub donde vive el código. Claude Code como agente que hace cumplir."
+*(pausa)*
+"Tres APIs. Cero frameworks pesados. Todo auditable línea por línea esta noche."
+*(pausa)*
+"Yo doy cuatro comandos. El sistema ejecuta más de veinte acciones."
+
+NO explico cada flecha. La arquitectura es para que se vea simple. Detalle vive en el repo.
+
+TRANSICIÓN: "Para entender qué pasa dentro del harness, pensemos en un restaurante."
+        </aside>
+      </section>
+
+      <!-- Slide 11 — Los componentes del harness, en metáfora (slide 8 = carácter; este = componentes) -->
+      <section>
+        <h2 class="problem-title">Los <span class="accent">componentes</span>, en metáfora</h2>
+        <p class="muted slide-sub">Un restaurante.</p>
+        <ul class="restaurant-analogy">
+          <li><strong class="purple">CLAUDE.md</strong> = El manual de operaciones</li>
+          <li><strong class="green">Skills</strong> = Las recetas del menú</li>
+          <li><strong class="yellow">Harness</strong> = Control de calidad</li>
+          <li><strong class="red">Hooks</strong> = Sensores automáticos <span class="muted">(alarma del horno, timer)</span></li>
+        </ul>
+        <p class="restaurant-caption muted">El chef (agente) sigue las recetas, el control de calidad verifica,<br/>y los sensores se activan solos.</p>
+        <aside class="notes">
+**⏱ 60 segundos · Energía: media · Lectura pausada, gestos con manos**
+
+**TÉCNICA TED**: metáfora familiar ANTES del técnico (próximo slide). Combate la maldición del conocimiento — la audiencia puede no saber Claude Code, pero todos entienden un restaurante.
+
+DIGO:
+"Pensemos en un restaurante."
+*(pausa)*
+"CLAUDE.md es el manual de operaciones del local. Define el estilo de la casa."
+"Skills son las recetas del menú. Cada comando que doy es una receta."
+"El harness es el control de calidad — el que prueba el plato antes de salir al cliente."
+"Y los hooks son los sensores automáticos: la alarma del horno, el timer del freezer. Saltan solos cuando algo está mal."
+*(pausa)*
+"El chef — el agente — sigue las recetas. El control de calidad verifica. Y los sensores... se activan solos."
+
+NO leo cada línea. El público las lee. Yo narro la historia.
+
+TRANSICIÓN: "Ahora veamos los archivos reales detrás de cada uno."
+        </aside>
+      </section>
+
+      <!-- Slide 12 — Componentes del Sistema (zoom-in al harness) -->
+      <section>
+        <h2 class="problem-title">Componentes del Sistema</h2>
+        <div class="system-diagram">
+          <div class="system-row">
+            <div class="system-box system-you">
+              <strong class="accent">TÚ</strong>
+              <div class="system-label">/create-issue · /start-issue · /review-pr · /close-issue · /new-runbook · /status</div>
+            </div>
+          </div>
+          <div class="system-arrow">↓</div>
+          <div class="system-row">
+            <div class="system-box system-skill">
+              <strong class="green">Skills</strong>
+              <div class="system-label">Comandos inteligentes</div>
+            </div>
+            <div class="system-box system-rules">
+              <strong class="purple">CLAUDE.md</strong>
+              <div class="system-label">Reglas</div>
+            </div>
+          </div>
+          <div class="system-arrow">↓ invocan</div>
+          <div class="system-row">
+            <div class="system-box system-scripts">
+              <strong class="yellow">Harness Scripts</strong>
+              <div class="system-label">linear_client.py · close_issue.sh · gate_pr_approval.sh · stop_gate.sh · ci_failure_bridge.py</div>
+            </div>
+          </div>
+          <div class="system-arrow">↓ se activan vía</div>
+          <div class="system-row">
+            <div class="system-box system-hooks">
+              <strong class="red">Hooks</strong>
+              <div class="system-label">Triggers automáticos · Pre-commit · Stop</div>
+            </div>
+          </div>
+          <div class="system-arrow">↓</div>
+          <div class="system-row">
+            <div class="system-box system-ext system-ext-linear"><strong>Linear</strong></div>
+            <div class="system-box system-ext system-ext-github"><strong>GitHub</strong></div>
+            <div class="system-box system-ext system-ext-ci"><strong class="yellow">CI</strong></div>
+          </div>
+        </div>
+        <aside class="notes">
+**⏱ 75 segundos · Energía: media · Recorro las capas con el láser**
+
+DIGO:
+"Acabamos de ver los tres sistemas. Ahora abramos la caja del harness."
+*(pausa)*
+"Arriba: yo. Seis comandos."
+*(señalo)*
+"Esos comandos invocan dos cosas: las Skills (las recetas de qué hacer) y CLAUDE.md (las reglas de cómo hacerlo)."
+*(pausa)*
+"Skills y reglas llaman a los Scripts del harness. Cinco archivos, Python y Bash, auditables esta noche."
+*(pausa)*
+"Los scripts se activan por Hooks: pre-commit cuando intentas commitear, Stop cuando cierras la sesión de Claude."
+*(pausa)*
+"Y todo eso, abajo, habla con Linear, GitHub y CI."
+
+NO leo cada componente. El público los ve. Yo guío la lectura de arriba hacia abajo.
+
+CLAVE: este slide responde la pregunta implícita "¿esto es vaporware?". La respuesta visual: NO, son archivos concretos con nombres reales que viven en el repo.
+
+TRANSICIÓN: "Y de esas 6 capas, una es la que diferencia esta charla del resto."
+        </aside>
+      </section>
+
+      <!-- Slide 13 — Mensaje núcleo (clímax emocional, justo antes de los demos) -->
+      <section>
+        <blockquote class="key-message">
+          El agente <span class="red">nunca</span> se auto-aprueba.
+        </blockquote>
+        <p class="fragment muted key-message-sub">CI verde no significa <em>listo para mergear.</em></p>
+        <aside class="notes">
+**⏱ 90 segundos · Energía: alta · Pausa larga**
+
+**⚠ ESTE ES EL CLÍMAX EMOCIONAL ANTES DE LOS DEMOS**. Inmediatamente después del slide técnico de arquitectura (slide 10), retomo lo emocional aquí — para que el momentum llegue caliente al Demo 1.
+
+DIGO:
+"El agente nunca se auto-aprueba."
+*(pausa de 5 segundos — dejo que la frase resuene)*
+*(click)*
+"CI verde no significa ready para merge."
+*(pausa)*
+"En mi experiencia, dos veces en los últimos seis meses, CI estuvo verde, todos los tests pasaron, los acceptance criteria estaban checkeados... y un humano encontró un bug serio en la PR review."
+*(pausa)*
+"CI valida lo mecánico. Sintaxis. Tests. Secretos."
+*(pausa)*
+"Solo un humano valida lo contextual. Scope. Arquitectura. Trade-offs de seguridad."
+*(pausa)*
+"Esta capa es la que protege contra el día que el agente se equivoque. Y créanme — ese día va a llegar."
+
+ESTE ES EL MENSAJE QUE QUIERO QUE SE LLEVEN. Si todo lo demás se olvida, esta frase no.
+
+TRANSICIÓN: "Vamos a verlo todo funcionando. Tres demos. Cinco minutos cada uno."
+        </aside>
+      </section>
+
+      <!-- ════════════════════════════════════════════════════════════════
+           D — DEMOS EN VIVO · 4 slides · ~25 min
+           Cada slide minimal — el demo ocurre en pantalla aparte
+           ════════════════════════════════════════════════════════════════ -->
+
+      <!-- Slide 14 — Demo 1: secreto bloqueado -->
+      <section>
+        <p class="demo-tag">Demo 1</p>
+        <h2 class="demo-title">El secreto que <span class="red">no llega</span></h2>
+        <p class="demo-sub muted">El error que todos hemos cometido.</p>
+        <div class="demo-cmd">
+          <code>git commit</code> → <span class="red">BLOQUEADO</span>
+        </div>
+        <aside class="notes">
+**⏱ 5-6 minutos · Energía: alta · Cambio a terminal**
+
+**ESTRUCTURA TED DE DEMO (Han/Pritchard)**: 1) avance · 2) contexto · 3) demo · 4) implicaciones.
+
+**1. AVANCE** (antes de cambiar a terminal):
+"En los próximos 5 minutos van a ver algo que probablemente ya intentaron poner en su equipo y abandonaron. Un secreto literalmente atrapado en el aire, antes de existir."
+*(pausa breve)*
+"Permítanme lucirme un poco. Esto funciona."
+
+**2. CONTEXTO** (breve, NO la primera media hora en complejidades técnicas):
+"Lo único que necesitan saber: tengo un hook de pre-commit instalado. Una línea de YAML. Eso es todo."
+
+**3. DEMO** — sigo mi runbook personal del Demo 1. Momento clave cuando bloquea:
+"Y... bloqueado. Pre-commit lo atrapó. Nunca llegó a git. Nunca llegó a GitHub. Nunca llegó a la nube."
+*(pausa)*
+"¿Cuántas veces han visto esto pasar en su equipo? Probablemente nunca. Porque el hook no estaba instalado."
+
+**4. IMPLICACIONES** (cierre del demo, antes de pasar al recap):
+"Esto, multiplicado por todo tu equipo, todos los días, sin pedir permiso. Sin recordatorios. Sin checklist."
+*(pausa)*
+"Y si alguien hace --no-verify, CI lo atrapa. Misma validación, doble red."
+
+SI FALLA: "Vamos a la grabación." Abrir el GIF de fallback grabado para Demo 1. Narrar encima.
+
+TRANSICIÓN: "El secreto no llega. Pero, ¿qué hay del bug que sí pasa los tests?"
+        </aside>
+      </section>
+
+      <!-- Slide 15 — Demo 2: CI atrapa el bug -->
+      <section>
+        <p class="demo-tag">Demo 2</p>
+        <h2 class="demo-title">El bug que <span class="yellow">se reporta solo</span></h2>
+        <p class="demo-sub muted">CI falla → Linear bug aparece automático.</p>
+        <div class="demo-cmd">
+          <code>git push</code> → CI ❌ → <span class="accent">Linear: bug #45</span>
+        </div>
+        <aside class="notes">
+**⏱ 5-6 minutos · Energía: alta · Estructura TED de demo (Han/Pritchard)**
+
+**1. AVANCE**:
+"Demo 2. ¿Qué pasa cuando el bug es tan sutil que pasa todos los tests locales? Lo van a ver auto-reportarse."
+
+**2. CONTEXTO** (breve):
+"Tengo un workflow de GitHub Actions. Y un script de 50 líneas que actúa de bridge. Eso es todo."
+
+**3. DEMO** — sigo mi runbook personal del Demo 2. Momento clave (Linear muestra el bug):
+*(cambio a browser, refresco Linear)*
+"Miren. Nadie abrió un ticket. El bridge lo creó automáticamente. Con link al run, el branch, mi nombre como autor."
+
+**4. IMPLICACIONES** (cierre antes del recap):
+"Tu CI no debería ser un grito en el vacío. Debería ser un input estructurado a tu sistema de project management."
+*(pausa)*
+"Tu sprint reviewer ya no necesita escarbar logs. El triaje empieza con contexto completo."
+
+SI FALLA: "Grabación." Abrir GIF de fallback de Demo 2.
+
+TRANSICIÓN: "Demo 3. Y este es el punchline."
+        </aside>
+      </section>
+
+      <!-- Slide 16 — Demo 3: PR approval (el punchline) -->
+      <section>
+        <p class="demo-tag">Demo 3 · <span class="accent">el punchline</span></p>
+        <h2 class="demo-title">El agente que <span class="purple">no se aprueba</span> a sí mismo</h2>
+        <p class="demo-sub muted">Tests verdes. CI verde. Criteria verdes. Y aun así...</p>
+        <div class="demo-cmd">
+          <code>/close-issue</code> → <span class="red">Gate 3: BLOCKED</span><br/>
+          <span class="small muted">"PR not approved by a human reviewer."</span>
+        </div>
+        <aside class="notes">
+**⏱ 6-7 minutos · Energía: muy alta · Estructura TED de demo (Han/Pritchard)**
+
+**ESTE ES EL CLÍMAX DE TODA LA CHARLA**. Estructura completa Han/Pritchard.
+
+**1. AVANCE** (entusiasta, "permítete lucirte"):
+"Demo 3. Y este es el punchline. Lo que acaban de ver hasta ahora es el contexto. Esto es el momento."
+
+**2. CONTEXTO** (breve):
+"Mismo issue. Misma rama. Tests verdes. CI verde. Acceptance criteria checkeados. Por estándares tradicionales esto está LISTO."
+
+**3. DEMO** — sigo mi runbook personal del Demo 3.
+
+Momento del bloqueo:
+"Y sin embargo..."
+*(pausa larga mientras corre el comando)*
+"Bloqueado. Gate 3 falla. PR not approved by a human reviewer."
+*(pausa)*
+"El agente acaba de hacer todo el trabajo. Y se niega a cerrar."
+
+Momento del approve:
+*(humano aprueba, reintenta close, todo pasa)*
+"Ahora cierra. Y vean el comentario de evidencia en Linear — cita el nombre del reviewer. Auditable para siempre."
+
+**4. IMPLICACIONES** (el mensaje grande):
+"La primera vez que un agente se auto-aprueba en producción, alguien va a tener una conversación incómoda con su líder."
+*(pausa)*
+"Esta capa existe para que ese día nunca llegue."
+*(pausa)*
+"En un mundo donde cada vez más equipos confían en agentes IA para tareas críticas, esta es la diferencia entre adopción responsable y catástrofe en producción."
+
+SI FALLA: abrir GIF de fallback de Demo 3.
+
+TRANSICIÓN: "Lo que acaban de ver."
+        </aside>
+      </section>
+
+      <!-- Slide 17 — Stat hero: el agente performance (golpe emocional post-demos) -->
+      <section>
+        <p class="stat-eyebrow muted">En los 3 demos:</p>
+        <div class="stat-hero">
+          <div class="stat-hero-item">
+            <span class="stat-hero-num">4</span>
+            <span class="stat-hero-label">comandos<br/>que tipeé</span>
+          </div>
+          <div class="stat-hero-item">
+            <span class="stat-hero-num accent">20+</span>
+            <span class="stat-hero-label">acciones<br/>automatizadas</span>
+          </div>
+          <div class="stat-hero-item">
+            <span class="stat-hero-num red">0</span>
+            <span class="stat-hero-label">olvidos<br/><span class="muted">· 0 cansancio · 0 presión</span></span>
+          </div>
+        </div>
+        <p class="fragment stat-hero-punch">Eso es lo que el agente acaba de hacer.<br/><span class="accent">Sin pedir permiso.</span></p>
+        <aside class="notes">
+**⏱ 60-75 segundos · Energía: ALTA · Pausa larga después de los números · Cierra el bloque de demos con peso**
+
+**ROL NARRATIVO**: este slide cierra los demos con un golpe visual. NO compite con slide 18 (Antes vs Después). Este slide habla del **agente performance** (qué hizo). El 18 habla de la **transformación del día a día** (cómo cambia tu trabajo).
+
+DIGO (lectura pausada, dejando que cada número aterrice):
+"En los tres demos que acabamos de ver..."
+*(señalo los números uno por uno)*
+"Cuatro comandos. Más de veinte acciones automatizadas. Cero olvidos."
+*(pausa)*
+"Cero cansancio. Cero presión de fin de sprint."
+
+*(click — aparece la frase de cierre)*
+"Eso es lo que el agente acaba de hacer."
+*(pausa)*
+"Sin pedir permiso."
+
+*(pausa larga, 4-5 segundos — dejo respirar antes del Antes/Después)*
+
+NO repaso los demos uno por uno. La gente los acaba de ver. Solo extraigo el contraste.
+
+TRANSICIÓN: "Ahora vean cómo cambia tu día a día."
+        </aside>
+      </section>
+
+      <!-- ════════════════════════════════════════════════════════════════
+           E — LECCIONES + CONCLUSIÓN · 5 slides · ~11 min
+           Objetivo: ¿y ahora qué? (cerrar el viaje)
+           ════════════════════════════════════════════════════════════════ -->
+
+      <!-- Slide 18 — Antes vs Después (transformación palpable) -->
+      <section>
+        <h2 class="problem-title">Antes vs Después</h2>
+        <div class="comparison">
+          <div class="comparison-col comparison-col-bad">
+            <h3 class="red">Sin Harness</h3>
+            <div class="comp-item"><span class="comp-icon comp-icon-red">×</span><span>10 pasos manuales</span></div>
+            <div class="comp-item"><span class="comp-icon comp-icon-red">×</span><span>0 verificaciones automáticas</span></div>
+            <div class="comp-item"><span class="comp-icon comp-icon-red">×</span><span>0 evidencia</span></div>
+            <div class="comp-item"><span class="comp-icon comp-icon-red">×</span><span>0 audit trail</span></div>
+            <div class="comp-item"><span class="comp-icon comp-icon-red">×</span><span>Secrets pueden filtrarse</span></div>
+          </div>
+          <div class="comparison-col comparison-col-good">
+            <h3 class="green">Con Harness</h3>
+            <div class="comp-item"><span class="comp-icon comp-icon-green">✓</span><span>6 skills</span></div>
+            <div class="comp-item"><span class="comp-icon comp-icon-green">✓</span><span>10+ verificaciones automáticas</span></div>
+            <div class="comp-item"><span class="comp-icon comp-icon-green">✓</span><span>Evidencia en cada cierre</span></div>
+            <div class="comp-item"><span class="comp-icon comp-icon-green">✓</span><span>Audit trail completo</span></div>
+            <div class="comp-item"><span class="comp-icon comp-icon-green">✓</span><span>Secrets bloqueados en commit</span></div>
+          </div>
+        </div>
+        <aside class="notes">
+**⏱ 75 segundos · Energía: media · Señalo cada columna, NO leo cada bullet**
+
+**TÉCNICA**: comparación visual como puente entre los demos (lo que vieron) y las lecciones (lo que aprendimos). Las columnas hablan solas — yo doy el cierre.
+
+DIGO:
+"Antes del harness, mi día era diez pasos manuales. Cero verificaciones. Cero evidencia. Cero audit trail. Y los secrets podían filtrarse en cualquier momento."
+*(pausa, miro a la derecha)*
+"Con el harness, son seis comandos. Más de diez verificaciones automáticas. Evidencia en cada cierre. Audit trail completo. Y los secrets están bloqueados en commit."
+*(pausa larga)*
+"La diferencia no es que ahora trabaje menos. La diferencia es que el sistema trabaja CONMIGO."
+
+NO leo cada bullet. El público los lee. Yo doy el contraste y el cierre.
+
+TRANSICIÓN: "Y si tuviera que dejarles UNA sola lección de todo esto..."
+        </aside>
+      </section>
+
+      <!-- Slide 19 — Una sola idea (la lección clave de toda la charla) -->
+      <section>
+        <h2 class="section-title">Una <span class="accent">sola</span> idea</h2>
+        <blockquote class="key-lesson-quote">
+          "Si tus herramientas no te dan control,<br/>
+          construye las tuyas —<br/>
+          <span class="yellow">es más simple de lo que crees.</span>"
+        </blockquote>
+        <p class="fragment muted key-lesson-sub">
+          La autonomía técnica del equipo<br/>
+          empieza cuando dejas de esperar <span class="accent">la herramienta perfecta</span>.
+        </p>
+        <aside class="notes">
+**⏱ 75 segundos · Energía: alta · Pausa larga después de la cita**
+
+**ROL NARRATIVO**: la lección clave de toda la charla. Aquí enumero brevemente las 3 lecciones tácticas que aprendí en 6 meses ANTES de mostrar la cita-síntesis. Las 3 lecciones se cuentan oralmente, no en un slide propio.
+
+DIGO (lectura pausada):
+"En seis meses de hacer esto aprendí tres cosas tácticas."
+"Una: CI verde no es ready para merge. Lo vieron en el Demo 3."
+"Dos: API propia es mejor que una abstracción mágica que falla silenciosamente."
+"Tres: cada regla del harness nace de un incidente — sin contexto, son ruido."
+*(pausa)*
+"Pero hay UN principio que las une todas."
+*(pausa)*
+
+LEO la cita:
+"Si tus herramientas no te dan control... construye las tuyas. Es más simple de lo que crees."
+*(pausa larga, 4 segundos)*
+
+*(click — aparece el sub)*
+
+DIGO:
+"La autonomía técnica del equipo empieza cuando dejas de esperar la herramienta perfecta."
+*(pausa)*
+"Y empiezas a construir la que tu equipo necesita."
+
+NO es promoción del repo. Es la idea más importante: la autonomía técnica del equipo.
+
+TRANSICIÓN: "Y aquí está mi regalo para ustedes."
+        </aside>
+      </section>
+
+      <!-- Slide 20 — Paisaje del futuro + acción -->
+      <section>
+        <h2 class="section-title">Imagínate iniciar la semana así…</h2>
+        <ul class="future-negations">
+          <li class="fragment">Sin discusiones de "¿estaba listo?"</li>
+          <li class="fragment">Sin perseguir tickets</li>
+          <li class="fragment">Sin capturas para auditoría</li>
+        </ul>
+        <p class="fragment future-finale-isolated">
+          Mientras el agente ejecuta,<br/>
+          <span class="accent">tú diseñas lo que viene.</span>
+        </p>
+        <ol class="big-steps-three fragment">
+          <li><strong>Fork</strong> · <code>gh repo fork felirangelp/harness-driven-dev</code></li>
+          <li><strong>15 min</strong> · sigue <code>docs/quick-start-15min.md</code></li>
+          <li><strong>Tu primer harness funcionando</strong></li>
+        </ol>
+        <p class="fragment bonus-line muted">
+          <span class="accent">Bonus:</span> el repo incluye <code>/new-runbook</code> y 2 plantillas operacionales <span class="small">(incident · deploy)</span>.
+        </p>
+        <aside class="notes">
+**⏱ 90 segundos · Energía: alta cálida · Pintar el cuadro despacio**
+
+**TÉCNICA TED — Paisaje del Futuro (cap. Revelación)**: dibujar un retrato vívido de un futuro que el público desee.
+
+**1. PINTO EL FUTURO** (pantalla solo con el título; ir clickeando para revelar cada línea):
+"Imagínate iniciar la semana así…"
+*(pausa larga, mirar al público)*
+
+*(click)* — aparece "Sin discusiones de '¿estaba listo?'"
+"Tu equipo abre PRs. Nadie discute si esto estaba listo, porque el sistema ya lo verificó."
+*(pausa)*
+
+*(click)* — aparece "Sin perseguir tickets"
+"Nadie persigue a un dev para que actualice el ticket. El estado se sincronizó solo."
+*(pausa)*
+
+*(click)* — aparece "Sin capturas para auditoría"
+"Nadie pide capturas de evidencia. La evidencia está en cada cierre, firmada."
+*(pausa)*
+
+*(click)* — aparece el payoff aislado
+"Mientras el agente ejecuta… tú diseñas lo que viene."
+*(pausa)*
+"Ese es el nuevo trabajo del developer en 2026: no escribir cada línea — orquestar el siguiente frente, revisar lo que el agente entregó, planear el refactor que sigue. El bottleneck ya no es el código. Es tu capacidad de dirigir."
+*(pausa larga)*
+
+**2. LOS PASOS** (click — aparecen los 3 pasos numerados):
+"¿Cómo llegas ahí? Tres pasos."
+"Uno. Fork."
+"Dos. Quince minutos siguiendo la guía — está cronometrada, paso a paso."
+"Tres. Tu primer harness funcionando."
+*(pausa)*
+"No teoría. Código."
+
+**3. BONUS** (click, opcional según tiempo):
+"Y como bonus — al hacer fork también encuentran una skill para generar runbooks operacionales. Dos plantillas listas: respuesta a incidentes y deployments manuales. Para que cuando los despierte el on-call a las 3 AM, tengan el procedimiento ya escrito."
+
+**TRANSICIÓN**: "Una última cosa."
+        </aside>
+      </section>
+
+      <!-- Slide 21 — Journey: ¿Y cómo expertIA lo está haciendo hoy? (síntesis visual end-to-end) -->
+      <section>
+        <h2 class="journey-title">¿Y cómo <span class="accent">expertIA</span> lo está haciendo hoy?</h2>
+
+        <div class="journey-stack">
+
+          <!-- ZONA 1 · LINEAR · apertura -->
+          <div class="journey-zone journey-zone--linear">
+            <p class="journey-zone-label">Linear · planeación</p>
+            <div class="journey-stage">
+              <span class="journey-stage-no journey-no-0">0</span>
+              <div class="journey-stage-body">
+                <div class="journey-stage-title">TICKET EXISTE <span class="stage-meta">Linear MCP</span></div>
+                <div class="journey-stage-explain">Creo el issue en Linear con acceptance criteria. Sin ticket, mi pre-commit me bloquea automáticamente.</div>
+                <div class="journey-stage-desc">Linear MCP · _linear_client.py · phase_zero_gate</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="journey-connector" aria-hidden="true"></div>
+
+          <!-- ZONA 2 · AGENTE · build -->
+          <div class="journey-zone journey-zone--agent">
+            <p class="journey-zone-label">Agente · build</p>
+            <div class="journey-stage">
+              <span class="journey-stage-no journey-no-1">1</span>
+              <div class="journey-stage-body">
+                <div class="journey-stage-title">AGENTE IMPLEMENTA <span class="stage-meta">Claude Code en mi terminal</span></div>
+                <div class="journey-stage-explain">Invoco skills como /pr-readiness o /spec-qa. CLAUDE.md le carga 18 reglas activas según el path que toca.</div>
+                <div class="journey-stage-desc">CLAUDE.md · 18 reglas · /spec-qa · /pr-readiness · /close-phase</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="journey-connector" aria-hidden="true"></div>
+
+          <!-- ZONA 3 · GITHUB · código -->
+          <div class="journey-zone journey-zone--github">
+            <p class="journey-zone-label">GitHub · código</p>
+            <div class="journey-stage">
+              <span class="journey-stage-no journey-no-2">2</span>
+              <div class="journey-stage-body">
+                <div class="journey-stage-title">PRE-COMMIT <span class="stage-meta">en mi laptop, antes de git commit</span></div>
+                <div class="journey-stage-explain">pre-commit run corre 27 hooks. Si gitleaks detecta un secret o falta un test: bloqueado, no llega a GitHub.</div>
+                <div class="journey-stage-desc">gitleaks · hexagonal_boundaries · code_without_tests · phase_zero_gate</div>
+              </div>
+            </div>
+            <div class="journey-stage">
+              <span class="journey-stage-no journey-no-3">3</span>
+              <div class="journey-stage-body">
+                <div class="journey-stage-title">CI <span class="stage-meta">GitHub Actions al git push</span></div>
+                <div class="journey-stage-explain">El workflow corre tests unit + integration + contracts + security scan. Rojo en main = no se mergea, punto.</div>
+                <div class="journey-stage-desc">.github/workflows/ci.yml · pytest · ruff · security scan</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="journey-connector" aria-hidden="true"></div>
+
+          <!-- ZONA 3 · HARNESS · enforcement -->
+          <div class="journey-zone journey-zone--harness">
+            <p class="journey-zone-label">Harness propio · enforcement</p>
+            <div class="journey-stage">
+              <span class="journey-stage-no journey-no-4">4</span>
+              <div class="journey-stage-body">
+                <div class="journey-stage-title">HARNESS GATES <span class="stage-meta">50+ scripts Python que YO escribí</span></div>
+                <div class="journey-stage-explain">Checks específicos del proyecto. Cada uno nació de un incidente (LL-XXX). Bloquean lo que CI genérico no puede.</div>
+                <div class="journey-stage-desc">spec_qa_executor · tdd_sequence_check · adr_index_generator · pr_duplicate_check</div>
+              </div>
+            </div>
+            <div class="journey-stage">
+              <span class="journey-stage-no journey-no-5">5</span>
+              <div class="journey-stage-body">
+                <div class="journey-stage-title">WEBHOOK <span class="stage-meta">Linear ↔ GitHub auto-sync</span></div>
+                <div class="journey-stage-explain">Crear branch con EXP-XXX mueve el ticket a In Progress. Uso Refs, nunca Closes (preserva los gates de cierre).</div>
+                <div class="journey-stage-desc">Linear-GitHub bridge · branch EXP-XXX → In Progress · LL-071</div>
+              </div>
+            </div>
+            <div class="journey-stage">
+              <span class="journey-stage-no journey-no-6">6</span>
+              <div class="journey-stage-body">
+                <div class="journey-stage-title">PR APPROVAL HUMANO <span class="stage-meta">el clímax del Demo 3</span></div>
+                <div class="journey-stage-explain">Aunque CI esté verde, un humano debe firmar el PR. Mi <span class="red">"APROBADO #N"</span> es la única autorización válida para merge.</div>
+                <div class="journey-stage-desc">/pr-readiness (dry-run) · gh pr create · APROBADO #N · LL-045</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="journey-connector" aria-hidden="true"></div>
+
+          <!-- ZONA 4 · LINEAR · cierre -->
+          <div class="journey-zone journey-zone--linear">
+            <p class="journey-zone-label">Linear · cierre</p>
+            <div class="journey-stage">
+              <span class="journey-stage-no journey-no-7">7</span>
+              <div class="journey-stage-body">
+                <div class="journey-stage-title">SESSION STOP <span class="stage-meta">11 gates al marcar Done</span></div>
+                <div class="journey-stage-explain">El script valida acceptance, CI, PR approval y evidencia. El audit trail para INVIMA/FDA se genera automático.</div>
+                <div class="journey-stage-desc">close_issue_with_evidence.py --done · 3-Step Closure · IEC 62304</div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <p class="journey-loop-caption">
+          <span class="accent">Linear abre el loop. Linear lo cierra.</span>
+          El agente nunca se sale del journey.
+        </p>
+
+        <aside class="notes">
+**⏱ ~75 segundos · Energía: media-alta · Recorrido visual con la mano · Justo antes del Gracias**
+
+**ROL NARRATIVO**: síntesis vivida del journey completo. Después de los demos, las lecciones, el "paisaje del futuro" — este slide responde la pregunta implícita: "¿pero ustedes lo están haciendo hoy?". Sí. Esto es lo que corremos en producción.
+
+DIGO (entrando con la pregunta):
+"Antes de cerrar — la pregunta que probablemente algunos están pensando..."
+*(leo el título)*
+"¿Y cómo expertIA lo está haciendo hoy?"
+*(pausa)*
+
+LECTURA POR ZONAS (no por paso — esa es la clave):
+
+*(señalo zona Linear arriba)*
+"Empieza acá. En Linear. Sin ticket, no commit. Ese es el cero."
+*(pausa)*
+
+*(señalo zona GitHub)*
+"De ahí pasa a GitHub. Dos guardias: pre-commit en tu laptop, CI en la nube. Si algo se cuela en uno, lo atrapa el otro."
+*(pausa)*
+
+*(señalo zona Harness — la más grande)*
+"Acá vive el harness. Tres etapas: los gates del dominio — más de 50 scripts hoy en expertIA. El webhook que mantiene Linear y GitHub sincronizados solos. Y la quinta — la que les conté en el Demo 3 — el PR approval humano. El agente nunca firma solo."
+*(pausa)*
+
+*(señalo zona Linear abajo)*
+"Y cierra acá. De vuelta en Linear. Session stop con once gates antes de marcar Done. Evidence en el ticket. Auditable."
+
+*(pausa larga — dejo respirar el caption del loop)*
+
+"Linear abre el loop. Linear lo cierra. Y el agente nunca se sale del journey."
+
+PUNCHLINE:
+"Si el agente intenta saltar de la zona Harness directo a Linear sin pasar por ese cinco — el approval humano — el loop NO se cierra. Y ese es exactamente el punto."
+
+**TRANSICIÓN AL GRACIAS**:
+"Y por eso vine a contarles esto. Porque funciona. Está en producción. Y es replicable."
+        </aside>
+      </section>
+
+      <!-- Slide 22 — Cierre + QR + agradecimiento -->
+      <section>
+        <div class="final-slide">
+          <h2 class="final-thanks">Gracias.</h2>
+          <p class="final-message">
+            El conocimiento es para <span class="accent">compartirlo.</span>
+          </p>
+          <div id="qr-final" class="qr-final"></div>
+          <p class="final-repo"><code>github.com/felirangelp/harness-driven-dev</code></p>
+          <p class="muted small">Preguntas duras, bienvenidas.</p>
+          <p class="muted small" style="margin-top: 1em;"><a href="../" style="color: var(--accent, #58a6ff);">Volver al sitio</a></p>
+        </div>
+        <aside class="notes">
+**⏱ 60 segundos + Q&A · Energía: alta y cálida · Contacto visual con varios**
+
+DIGO:
+"Una última cosa."
+*(pausa)*
+"Yo no inventé pre-commit hooks. No inventé GitHub Actions. No inventé Linear ni Claude Code."
+*(pausa)*
+"Lo que hice fue conectarlos en un patrón que funciona. Y lo estoy compartiendo porque..."
+*(pausa larga)*
+"...el conocimiento es para compartirlo."
+*(silencio de 4 segundos)*
+"El QR los lleva al repo. Está abierto, está documentado, está esperándolos."
+*(pausa)*
+"Gracias por su tiempo."
+*(silencio de 3 segundos)*
+"Preguntas duras... bienvenidas."
+
+CIERRE TED-STYLE: gratitud + invitación al diálogo + silencio antes del aplauso.
+
+NO digo "y eso es todo" o "fin de la charla". El silencio cierra mejor que las palabras.
+
+DESPUÉS:
+- Q&A según qa-bank.md
+- Quedarme 10 min para preguntas individuales
+- Tweet/post después: "Gracias. Repo: [URL]"
+        </aside>
+      </section>
+
+    </div>
   </div>
-  <p class="muted" style="font-size:0.6em; margin-top:2em;">
-    <span data-en="Navigate: arrow keys" data-es="Navegar: teclas de flecha">Navigate: arrow keys</span> &middot; <a href="../" data-en="Back to site" data-es="Volver al sitio">Back to site</a>
-  </p>
-</section>
 
-<!-- ── Slide 2: The Problem ── -->
-<section>
-  <h2 data-en="The Problem" data-es="El Problema">The Problem</h2>
-  <table>
-    <thead>
-      <tr>
-        <th class="green" data-en="What we KNOW" data-es="Lo que SABEMOS">What we KNOW</th>
-        <th class="yellow" data-en="What we DO" data-es="Lo que HACEMOS">What we DO</th>
-        <th class="red" data-en="What gets ENFORCED" data-es="Lo que se CUMPLE">What gets ENFORCED</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td data-en="Commit conventions" data-es="Convenciones de commits">Commit conventions</td>
-        <td data-en="Sometimes" data-es="A veces">Sometimes</td>
-        <td data-en="Almost never" data-es="Casi nunca">Almost never</td>
-      </tr>
-      <tr>
-        <td data-en="No secrets in code" data-es="No secrets en el c&oacute;digo">No secrets in code</td>
-        <td data-en="After the incident" data-es="Despu&eacute;s del incidente">After the incident</td>
-        <td data-en="Sporadically" data-es="Espor&aacute;dicamente">Sporadically</td>
-      </tr>
-      <tr>
-        <td data-en="Tests before merge" data-es="Tests antes de merge">Tests before merge</td>
-        <td data-en="On new projects" data-es="En proyectos nuevos">On new projects</td>
-        <td data-en="Until there's pressure" data-es="Hasta que hay presi&oacute;n">Until there's pressure</td>
-      </tr>
-      <tr>
-        <td data-en="Traceable issues" data-es="Issues trazables">Traceable issues</td>
-        <td data-en='On "important" PRs' data-es='En PRs "importantes"'>On "important" PRs</td>
-        <td data-en="When there's an audit" data-es="Cuando hay auditor&iacute;a">When there's an audit</td>
-      </tr>
-      <tr>
-        <td data-en="Definition of Done" data-es="Definici&oacute;n de Terminado">Definition of Done</td>
-        <td data-en="In retros" data-es="En retros">In retros</td>
-        <td data-en="Never mechanically" data-es="Nunca mec&aacute;nicamente">Never mechanically</td>
-      </tr>
-    </tbody>
-  </table>
-</section>
-
-<!-- ── Slide 3: The Pitch ── -->
-<section>
-  <h2 data-en="Why?" data-es="&iquest;Por qu&eacute;?">Why?</h2>
-  <blockquote style="border-left:4px solid #58a6ff; padding-left:1em; font-style:italic; font-size:1.1em;" data-en="&quot;The agent doesn't just write code &mdash; it <span class='blue'>self-enforces</span> the rules your team already knows but can't consistently follow.&quot;" data-es="&quot;El agente no solo escribe c&oacute;digo &mdash; <span class='blue'>hace cumplir autom&aacute;ticamente</span> las reglas que tu equipo ya conoce pero no logra seguir consistentemente.&quot;">
-    "The agent doesn't just write code &mdash; it <span class="blue">self-enforces</span> the rules your team already knows but can't consistently follow."
-  </blockquote>
-</section>
-
-<!-- ── Slide 4: How It Works ── -->
-<section>
-  <h2 data-en="4 Commands, 15+ Actions" data-es="4 Comandos, 15+ Acciones">4 Commands, 15+ Actions</h2>
-
-  <!-- Flow 1: create-issue -->
-  <div class="diagram-flow">
-    <div class="d-node d-node-accent">
-      <strong>/create-issue</strong>
-      <div class="d-label" data-en="Add dark mode" data-es="Agregar dark mode">Add dark mode</div>
-    </div>
-    <span class="d-arrow">&rarr;</span>
-    <div class="d-node"><span data-en="Criteria" data-es="Criterios">Criteria</span></div>
-    <span class="d-arrow">&rarr;</span>
-    <div class="d-node d-node-purple"><span>Linear</span></div>
-  </div>
-
-  <!-- Flow 2: start-issue -->
-  <div class="diagram-flow">
-    <div class="d-node d-node-accent">
-      <strong>/start-issue</strong>
-      <div class="d-label">DEMO-1</div>
-    </div>
-    <span class="d-arrow">&rarr;</span>
-    <div class="d-node"><span data-en="Read Linear" data-es="Lee Linear">Read Linear</span></div>
-    <span class="d-arrow">&rarr;</span>
-    <div class="d-node"><span data-en="Create branch" data-es="Crea branch">Create branch</span></div>
-    <span class="d-arrow">&rarr;</span>
-    <div class="d-node d-node-green"><span data-en="In Progress" data-es="In Progress">In Progress</span></div>
-  </div>
-
-  <!-- Flow 3: implement -->
-  <div class="diagram-flow">
-    <div class="d-node d-node-accent">
-      <strong data-en="code + commit" data-es="code + commit">code + commit</strong>
-    </div>
-    <span class="d-arrow">&rarr;</span>
-    <div class="d-node"><span data-en="Code" data-es="C&oacute;digo">Code</span></div>
-    <span class="d-arrow">&rarr;</span>
-    <div class="d-node"><span>Tests</span></div>
-    <span class="d-arrow">&rarr;</span>
-    <div class="d-node d-node-green">Push + PR</div>
-  </div>
-
-  <!-- Flow 4: close-issue -->
-  <div class="diagram-flow">
-    <div class="d-node d-node-accent">
-      <strong>/close-issue</strong>
-      <div class="d-label">DEMO-1</div>
-    </div>
-    <span class="d-arrow">&rarr;</span>
-    <div class="d-node"><span data-en="3 gates" data-es="3 gates">3 gates</span></div>
-    <span class="d-arrow">&rarr;</span>
-    <div class="d-node"><span data-en="Evidence" data-es="Evidencia">Evidence</span></div>
-    <span class="d-arrow">&rarr;</span>
-    <div class="d-node d-node-green">Done</div>
-  </div>
-</section>
-
-<!-- ── Slide 5: 4 Layers ── -->
-<section>
-  <h2 data-en="4 Layers of Enforcement" data-es="4 Capas de Enforcement">4 Layers of Enforcement</h2>
-  <div class="layer-box" style="border-left:4px solid #238636;">
-    <span class="layer-num green">1</span>
-    <span class="layer-name">Pre-commit</span>
-    <span class="layer-desc" data-en="gitleaks + issue-ref hook &mdash; &quot;Won't let you commit bad code&quot;" data-es="gitleaks + issue-ref hook &mdash; &quot;No te deja commitear mal&quot;">gitleaks + issue-ref hook &mdash; "Won't let you commit bad code"</span>
-  </div>
-  <div class="layer-box" style="border-left:4px solid #d29922;">
-    <span class="layer-num yellow">2</span>
-    <span class="layer-name">CI</span>
-    <span class="layer-desc" data-en="Tests + gitleaks &mdash; &quot;If it fails, the agent detects and fixes it&quot;" data-es="Tests + gitleaks &mdash; &quot;Si falla, el agente lo detecta y corrige&quot;">Tests + gitleaks &mdash; "If it fails, the agent detects and fixes it"</span>
-  </div>
-  <div class="layer-box" style="border-left:4px solid #58a6ff;">
-    <span class="layer-num blue">3</span>
-    <span class="layer-name">Harness</span>
-    <span class="layer-desc" data-en="close_issue.sh with 3 gates &mdash; &quot;Won't let you close without evidence&quot;" data-es="close_issue.sh con 3 gates &mdash; &quot;No te deja cerrar sin evidencia&quot;">close_issue.sh with 3 gates &mdash; "Won't let you close without evidence"</span>
-  </div>
-  <div class="layer-box" style="border-left:4px solid #8957e5;">
-    <span class="layer-num purple">4</span>
-    <span class="layer-name">Webhook</span>
-    <span class="layer-desc" data-en="PR &rarr; In Progress, merge &rarr; Done &mdash; &quot;Status syncs automatically&quot;" data-es="PR &rarr; In Progress, merge &rarr; Done &mdash; &quot;El estado se sincroniza solo&quot;">PR &rarr; In Progress, merge &rarr; Done &mdash; "Status syncs automatically"</span>
-  </div>
-</section>
-
-<!-- ── Slide 6: The System ── -->
-<section>
-  <h2 style="margin-bottom:0.1em;" data-en="System Components" data-es="Componentes del Sistema">System Components</h2>
-  <div class="arch-diagram">
-    <!-- You -->
-    <div class="arch-row">
-      <div class="arch-box" style="border-color:#58a6ff;">
-        <strong class="blue" data-en="YOU" data-es="T&Uacute;">YOU</strong>
-        <div class="d-label">/create-issue &middot; /start-issue &middot; /close-issue &middot; /status</div>
-      </div>
-    </div>
-    <div class="d-arrow-down">&darr;</div>
-    <!-- Skills + CLAUDE.md -->
-    <div class="arch-row">
-      <div class="arch-box" style="border-color:#238636;">
-        <strong class="green">Skills</strong>
-        <div class="d-label" data-en="Intelligent commands" data-es="Comandos inteligentes">Intelligent commands</div>
-      </div>
-      <div class="arch-box" style="border-color:#8957e5;">
-        <strong class="purple">CLAUDE.md</strong>
-        <div class="d-label" data-en="Rules" data-es="Reglas">Rules</div>
-      </div>
-    </div>
-    <div class="d-arrow-down" data-en="&darr; invoke" data-es="&darr; invocan">&darr; invoke</div>
-    <!-- Harness Scripts -->
-    <div class="arch-row">
-      <div class="arch-box" style="border-color:#d29922;">
-        <strong class="yellow">Harness Scripts</strong>
-        <div class="d-label">linear_client.py &middot; close_issue.sh &middot; check_issue_ref.sh &middot; ci_failure_bridge.py</div>
-      </div>
-    </div>
-    <div class="d-arrow-down" data-en="&darr; activate via" data-es="&darr; se activan via">&darr; activate via</div>
-    <!-- Hooks -->
-    <div class="arch-row">
-      <div class="arch-box" style="border-color:#f85149;">
-        <strong class="red">Hooks</strong>
-        <div class="d-label" data-en="Auto triggers" data-es="Triggers autom&aacute;ticos">Auto triggers</div>
-      </div>
-    </div>
-    <div class="d-arrow-down">&darr;</div>
-    <!-- External -->
-    <div class="arch-row">
-      <div class="arch-box" style="border-color:#5e6ad2;">
-        <strong style="color:#5e6ad2;">Linear</strong>
-      </div>
-      <div class="arch-box" style="border-color:#f0f6fc;">
-        <strong>GitHub</strong>
-      </div>
-      <div class="arch-box" style="border-color:#d29922;">
-        <strong class="yellow">CI</strong>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ── Slide 7: The Analogy ── -->
-<section>
-  <h2 data-en="The Restaurant Analogy" data-es="La Analog&iacute;a del Restaurante">The Restaurant Analogy</h2>
-  <div style="text-align:left; font-size:0.85em; max-width:600px; margin:0 auto;">
-    <p><strong class="purple">CLAUDE.md</strong> = <span data-en="The operations manual" data-es="El manual de operaciones">The operations manual</span></p>
-    <p><strong class="green">Skills</strong> = <span data-en="The menu recipes" data-es="Las recetas del men&uacute;">The menu recipes</span></p>
-    <p><strong class="yellow">Harness</strong> = <span data-en="Quality control" data-es="Control de calidad">Quality control</span></p>
-    <p><strong class="red">Hooks</strong> = <span data-en="Automatic sensors (oven alarm, timer)" data-es="Sensores autom&aacute;ticos (alarma del horno, timer)">Automatic sensors (oven alarm, timer)</span></p>
-  </div>
-  <p class="muted" style="margin-top:1.5em; font-size:0.75em;" data-en="The chef (agent) follows the recipes, quality control verifies,<br>and the sensors fire on their own." data-es="El chef (agente) sigue las recetas, el control de calidad verifica,<br>y los sensores se activan solos.">
-    The chef (agent) follows the recipes, quality control verifies,<br>
-    and the sensors fire on their own.
-  </p>
-</section>
-
-<!-- ── Slide 8: Secret Blocked ── -->
-<section>
-  <h2 data-en="Secret Blocked &mdash; Multi-layer Defense" data-es="Secret Bloqueado &mdash; Defensa Multicapa">Secret Blocked &mdash; Multi-layer Defense</h2>
-  <div class="secret-flow">
-    <div class="sf-step" style="border-left:3px solid #f85149;">
-      <div class="sf-num">1</div>
-      <div class="sf-content">
-        <code>git commit</code> &mdash; <span data-en="API key in code" data-es="API key en el c&oacute;digo">API key in code</span>
-        <div class="d-label" data-en="gitleaks pre-commit hook scans..." data-es="gitleaks pre-commit hook escanea...">gitleaks pre-commit hook scans...</div>
-      </div>
-      <div class="sf-result red" data-en="BLOCKED" data-es="BLOQUEADO">BLOCKED</div>
-    </div>
-    <div style="text-align:center; font-size:0.6em; color:#8b949e;" data-en="&darr; never reached GitHub" data-es="&darr; nunca lleg&oacute; a GitHub">&darr; never reached GitHub</div>
-
-    <div class="sf-step" style="border-left:3px solid #58a6ff;">
-      <div class="sf-num">2</div>
-      <div class="sf-content">
-        <span data-en="Agent detects the problem and fixes it" data-es="El agente detecta el problema y lo corrige">Agent detects the problem and fixes it</span>
-        <div class="d-label" data-en="Removes key from code &rarr; moves it to .env" data-es="Saca la key del c&oacute;digo &rarr; la mueve a .env">Removes key from code &rarr; moves it to .env</div>
-      </div>
-      <div class="sf-result blue" data-en="AUTO-FIX" data-es="AUTO-FIX">AUTO-FIX</div>
-    </div>
-
-    <div class="sf-step" style="border-left:3px solid #238636;">
-      <div class="sf-num">3</div>
-      <div class="sf-content">
-        <code>git commit</code> &mdash; <span data-en="clean code, key in .env" data-es="c&oacute;digo limpio, key en .env">clean code, key in .env</span>
-        <div class="d-label" data-en="gitleaks scans... clean" data-es="gitleaks escanea... limpio">gitleaks scans... clean</div>
-      </div>
-      <div class="sf-result green" data-en="PASSED" data-es="PAS&Oacute;">PASSED</div>
-    </div>
-    <div style="text-align:center; font-size:0.6em; color:#8b949e;" data-en="&darr; what if someone uses --no-verify?" data-es="&darr; &iquest;qu&eacute; pasa si alguien usa --no-verify?">&darr; what if someone uses --no-verify?</div>
-
-    <div class="sf-step" style="border-left:3px solid #f85149;">
-      <div class="sf-num">4</div>
-      <div class="sf-content">
-        <span data-en="GitHub Actions runs gitleaks again" data-es="GitHub Actions corre gitleaks de nuevo">GitHub Actions runs gitleaks again</span>
-        <div class="d-label" data-en="Second layer catches it if someone bypasses pre-commit" data-es="La segunda capa lo atrapa si alguien salta el pre-commit">Second layer catches it if someone bypasses pre-commit</div>
-      </div>
-      <div class="sf-result red" data-en="PR BLOCKED" data-es="PR BLOQUEADO">PR BLOCKED</div>
-    </div>
-  </div>
-
-  <div style="margin-top:0.8em; padding:0.5em 1em; background:#161b22; border:1px solid #21262d; border-radius:8px; font-size:0.6em; text-align:left;">
-    <strong class="yellow" data-en="&#9655; Live Demo 1" data-es="&#9655; Demo en Vivo 1">&#9655; Live Demo 1</strong>
-    <span class="muted" data-en=" &mdash; We hardcode an API key &rarr; gitleaks blocks &rarr; fix &rarr; full cycle" data-es=" &mdash; Metemos una API key &rarr; gitleaks bloquea &rarr; corregimos &rarr; ciclo completo"> &mdash; Metemos una API key &rarr; gitleaks bloquea &rarr; corregimos &rarr; ciclo completo</span>
-  </div>
-</section>
-
-<!-- ── Slide 8b: Demo 2 - CI Catches Bug ── -->
-<section>
-  <h2 data-en="CI Catches a Bug" data-es="CI Atrapa un Bug">CI Catches a Bug</h2>
-  <div class="secret-flow">
-    <div class="sf-step" style="border-left:3px solid #238636;">
-      <div class="sf-num">1</div>
-      <div class="sf-content">
-        <span data-en="Add &ldquo;Export JSON&rdquo; button" data-es="Agregar bot&oacute;n &ldquo;Export JSON&rdquo;">Add &ldquo;Export JSON&rdquo; button</span>
-        <div class="d-label" data-en="New feature requested via Linear issue" data-es="Nueva feature solicitada v&iacute;a issue en Linear">New feature requested via Linear issue</div>
-      </div>
-      <div class="sf-result green" data-en="FEATURE" data-es="FEATURE">FEATURE</div>
-    </div>
-
-    <div class="sf-step" style="border-left:3px solid #d29922;">
-      <div class="sf-num">2</div>
-      <div class="sf-content">
-        <span data-en="Accidental bug in <code>deleteTask</code>" data-es="Bug accidental en <code>deleteTask</code>">Accidental bug in <code>deleteTask</code></span>
-        <div class="d-label" data-en="Filter logic inverted during refactor: === instead of !==" data-es="L&oacute;gica del filtro invertida en refactor: === en vez de !==">Filter logic inverted during refactor: === instead of !==</div>
-      </div>
-      <div class="sf-result yellow" data-en="BUG" data-es="BUG">BUG</div>
-    </div>
-
-    <div style="text-align:center; font-size:0.6em; color:#8b949e;" data-en="&darr; pre-commit passes (no tests) &rarr; push &rarr; PR" data-es="&darr; pre-commit pasa (no corre tests) &rarr; push &rarr; PR">&darr; pre-commit passes (no tests) &rarr; push &rarr; PR</div>
-
-    <div class="sf-step" style="border-left:3px solid #f85149;">
-      <div class="sf-num">3</div>
-      <div class="sf-content">
-        <span data-en="GitHub Actions runs tests" data-es="GitHub Actions corre los tests">GitHub Actions runs tests</span>
-        <div class="d-label" data-en="&ldquo;deleteTask removes the card&rdquo; &rarr; FAIL" data-es="&ldquo;deleteTask removes the card&rdquo; &rarr; FALLA">&ldquo;deleteTask removes the card&rdquo; &rarr; FAIL</div>
-      </div>
-      <div class="sf-result red" data-en="CI FAILED" data-es="CI FALL&Oacute;">CI FAILED</div>
-    </div>
-
-    <div class="sf-step" style="border-left:3px solid #238636;">
-      <div class="sf-num">4</div>
-      <div class="sf-content">
-        <span data-en="Fix the bug, push again" data-es="Corregir el bug, push de nuevo">Fix the bug, push again</span>
-        <div class="d-label" data-en="Revert === to !== &rarr; CI passes &rarr; close with evidence" data-es="Revertir === a !== &rarr; CI pasa &rarr; cerrar con evidencia">Revert === to !== &rarr; CI passes &rarr; close with evidence</div>
-      </div>
-      <div class="sf-result green" data-en="FIXED" data-es="CORREGIDO">FIXED</div>
-    </div>
-  </div>
-
-  <div style="margin-top:0.8em; padding:0.5em 1em; background:#161b22; border:1px solid #21262d; border-radius:8px; font-size:0.6em; text-align:left;">
-    <strong class="yellow" data-en="&#9655; Live Demo 2" data-es="&#9655; Demo en Vivo 2">&#9655; Live Demo 2</strong>
-    <span class="muted" data-en=" &mdash; Feature + accidental bug &rarr; CI catches it &rarr; fix &amp; close with 3 gates" data-es=" &mdash; Feature + bug accidental &rarr; CI lo atrapa &rarr; corregimos y cerramos con 3 gates"> &mdash; Feature + bug accidental &rarr; CI lo atrapa &rarr; corregimos y cerramos con 3 gates</span>
-  </div>
-</section>
-
-<!-- ── Slide 9: Gate System ── -->
-<section>
-  <h2 data-en="Gate System" data-es="Sistema de Gates">Gate System</h2>
-  <p class="muted" style="font-size:0.7em; margin-bottom:0.8em;"><code>/close-issue DEMO-1</code></p>
-  <div class="gate-visual">
-    <div class="gate-row">
-      <div class="gate-icon gate-icon-pass">&#10003;</div>
-      <div class="gate-bar">
-        <span><strong>Gate 1/3</strong> &mdash; <span data-en="Tests passing?" data-es="&iquest;Tests pasan?">Tests passing?</span></span>
-        <span><code>npm test</code> &rarr; <span class="gate-result green">PASS</span></span>
-      </div>
-    </div>
-    <div class="gate-row">
-      <div class="gate-icon gate-icon-pass">&#10003;</div>
-      <div class="gate-bar">
-        <span><strong>Gate 2/3</strong> &mdash; <span data-en="CI green?" data-es="&iquest;CI green?">CI green?</span></span>
-        <span><code>gh run list</code> &rarr; <span class="gate-result green">PASS</span></span>
-      </div>
-    </div>
-    <div class="gate-row">
-      <div class="gate-icon gate-icon-pass">&#10003;</div>
-      <div class="gate-bar">
-        <span><strong>Gate 3/3</strong> &mdash; <span data-en="Criteria?" data-es="&iquest;Criterios?">Criteria?</span></span>
-        <span><code>Linear API</code> &rarr; <span class="gate-result green">PASS</span></span>
-      </div>
-    </div>
-  </div>
-  <div style="margin-top:0.5em; text-align:center;">
-    <div class="diagram-flow" style="justify-content:center; font-size:0.85em;">
-      <div class="d-node d-node-green">
-        <strong class="green" data-en="ALL PASSED (3/3)" data-es="TODOS PASARON (3/3)">ALL PASSED (3/3)</strong>
-      </div>
-      <span class="d-arrow">&rarr;</span>
-      <div class="d-node">
-        <span data-en="Post evidence" data-es="Publica evidencia">Post evidence</span>
-      </div>
-      <span class="d-arrow">&rarr;</span>
-      <div class="d-node d-node-green">
-        <strong class="green">Done</strong>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ── Slide 10: Before/After ── -->
-<section>
-  <h2 data-en="Before vs After" data-es="Antes vs Despu&eacute;s">Before vs After</h2>
-  <div class="comparison">
-    <div class="comparison-col" style="border-top:3px solid #f85149;">
-      <h3 class="red" data-en="Without Harness" data-es="Sin Harness">Without Harness</h3>
-      <div class="comp-item">
-        <div class="comp-icon comp-icon-red">&times;</div>
-        <span data-en="10 manual steps" data-es="10 pasos manuales">10 manual steps</span>
-      </div>
-      <div class="comp-item">
-        <div class="comp-icon comp-icon-red">&times;</div>
-        <span data-en="0 automatic verifications" data-es="0 verificaciones autom&aacute;ticas">0 automatic verifications</span>
-      </div>
-      <div class="comp-item">
-        <div class="comp-icon comp-icon-red">&times;</div>
-        <span data-en="0 evidence" data-es="0 evidencia">0 evidence</span>
-      </div>
-      <div class="comp-item">
-        <div class="comp-icon comp-icon-red">&times;</div>
-        <span data-en="0 audit trail" data-es="0 audit trail">0 audit trail</span>
-      </div>
-      <div class="comp-item">
-        <div class="comp-icon comp-icon-red">&times;</div>
-        <span data-en="Secrets can leak" data-es="Secrets pueden filtrarse">Secrets can leak</span>
-      </div>
-    </div>
-    <div class="comparison-col" style="border-top:3px solid #238636;">
-      <h3 class="green" data-en="With Harness" data-es="Con Harness">With Harness</h3>
-      <div class="comp-item">
-        <div class="comp-icon comp-icon-green">&#10003;</div>
-        <span data-en="4 skills" data-es="4 skills">4 skills</span>
-      </div>
-      <div class="comp-item">
-        <div class="comp-icon comp-icon-green">&#10003;</div>
-        <span data-en="5+ automatic verifications" data-es="5+ verificaciones autom&aacute;ticas">5+ automatic verifications</span>
-      </div>
-      <div class="comp-item">
-        <div class="comp-icon comp-icon-green">&#10003;</div>
-        <span data-en="Evidence on every close" data-es="Evidencia en cada cierre">Evidence on every close</span>
-      </div>
-      <div class="comp-item">
-        <div class="comp-icon comp-icon-green">&#10003;</div>
-        <span data-en="Full audit trail" data-es="Audit trail completo">Full audit trail</span>
-      </div>
-      <div class="comp-item">
-        <div class="comp-icon comp-icon-green">&#10003;</div>
-        <span data-en="Secrets blocked at commit" data-es="Secrets bloqueados en commit">Secrets blocked at commit</span>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ── Slide 11: Key Lesson ── -->
-<section>
-  <h2 data-en="Key Lesson" data-es="Lecci&oacute;n Clave">Key Lesson</h2>
-  <blockquote style="border-left:4px solid #d29922; padding-left:1em; font-style:italic;" data-en="&quot;If your tools don't give you control, build your own &mdash; it's simpler than you think.&quot;" data-es="&quot;Si tus herramientas no te dan control, construye las tuyas &mdash; es m&aacute;s simple de lo que crees.&quot;">
-    "If your tools don't give you control, build your own &mdash; it's simpler than you think."
-  </blockquote>
-  <p class="muted" style="margin-top:1em; font-size:0.8em;" data-en="The entire enforcement system fits in &lt;900 lines.<br>No frameworks. No dependencies. Full control." data-es="Todo el sistema de enforcement cabe en &lt;900 l&iacute;neas.<br>Sin frameworks. Sin dependencias. Control total.">
-    The entire enforcement system fits in &lt;900 lines.<br>
-    No frameworks. No dependencies. Full control.
-  </p>
-</section>
-
-<!-- ── Slide 12: Call to Action ── -->
-<section>
-  <h2 data-en="Get Started" data-es="Empieza Ya">Get Started</h2>
-  <p style="font-size:1.2em;" data-en="Fork it. Star it. Adapt it." data-es="Fork. Star. Ad&aacute;ptalo.">Fork it. Star it. Adapt it.</p>
-  <p style="margin-top:1.5em;">
-    <a href="https://github.com/felirangelp/harness-driven-dev" style="font-size:1.1em;">
-      github.com/felirangelp/harness-driven-dev
-    </a>
-  </p>
-  <div style="margin-top:1.5em; display:flex; gap:1em; justify-content:center; font-size:0.7em;">
-    <a href="https://github.com/felirangelp/harness-driven-dev/blob/main/docs/guide-linear.md" class="d-node d-node-accent" style="text-decoration:none; color:#c9d1d9;">
-      <strong style="color:#5e6ad2;" data-en="Linear Guide" data-es="Gu&iacute;a Linear">Linear Guide</strong>
-      <div class="d-label" data-en="Team, API key, webhooks" data-es="Team, API key, webhooks">Team, API key, webhooks</div>
-    </a>
-    <a href="https://github.com/felirangelp/harness-driven-dev/blob/main/docs/guide-github.md" class="d-node d-node-accent" style="text-decoration:none; color:#c9d1d9;">
-      <strong style="color:#f0f6fc;" data-en="GitHub Guide" data-es="Gu&iacute;a GitHub">GitHub Guide</strong>
-      <div class="d-label" data-en="Secrets, CI, Pages, hooks" data-es="Secrets, CI, Pages, hooks">Secrets, CI, Pages, hooks</div>
-    </a>
-  </div>
-  <p class="muted" style="margin-top:1.5em; font-size:0.7em;" data-en="Setup: ~2 hours &middot; Harness: &lt;900 lines &middot; ROI: immediate" data-es="Setup: ~2 horas &middot; Harness: &lt;900 l&iacute;neas &middot; ROI: inmediato">
-    Setup: ~2 hours &middot; Harness: &lt;900 lines &middot; ROI: immediate
-  </p>
-  <div style="display:flex; align-items:center; justify-content:center; gap:1em; margin-top:1.5em;">
-    <div id="linkedin-qr-end" style="background:#fff; padding:6px; border-radius:6px; line-height:0;"></div>
-    <p style="font-size:0.65em; color:#8b949e; margin:0;" data-en="Made by <a href='https://www.linkedin.com/in/felirangelp/' style='color:#58a6ff;'>Felipe Rangel</a>" data-es="Realizado por <a href='https://www.linkedin.com/in/felirangelp/' style='color:#58a6ff;'>Felipe Rangel</a>">
-      Made by <a href="https://www.linkedin.com/in/felirangelp/" style="color:#58a6ff;">Felipe Rangel</a>
-    </p>
-  </div>
-</section>
-
-</div>
-</div>
-
-<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.js"></script>
-<script>
-  Reveal.initialize({
-    hash: true,
-    transition: 'slide',
-    width: 1200,
-    height: 800,
-    margin: 0.1,
-  });
-
-  // Generate LinkedIn QR codes (title + final slide)
-  var qr = qrcode(0, 'M');
-  qr.addData('https://www.linkedin.com/in/felirangelp/');
-  qr.make();
-  var qrImg = qr.createImgTag(3, 0);
-  document.getElementById('linkedin-qr').innerHTML = qrImg;
-  document.getElementById('linkedin-qr-end').innerHTML = qrImg;
-
-  var currentLang = 'en';
-
-  function toggleLang() {
-    currentLang = currentLang === 'en' ? 'es' : 'en';
-
-    // Toggle data-en/data-es text elements
-    document.querySelectorAll('[data-' + currentLang + ']').forEach(function(el) {
-      el.innerHTML = el.getAttribute('data-' + currentLang);
+  <script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/highlight/highlight.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/notes/notes.js"></script>
+  <script>
+    Reveal.initialize({
+      hash: true,
+      controls: true,
+      progress: true,
+      center: true,
+      transition: 'fade',
+      transitionSpeed: 'default',
+      plugins: [RevealHighlight, RevealNotes]
     });
-
-    // Toggle code blocks (en-block / es-block)
-    document.querySelectorAll('.en-block').forEach(function(el) {
-      el.style.display = currentLang === 'en' ? '' : 'none';
-    });
-    document.querySelectorAll('.es-block').forEach(function(el) {
-      el.style.display = currentLang === 'es' ? '' : 'none';
-    });
-
-    // Update toggle button
-    var toggle = document.querySelector('.lang-toggle');
-    if (currentLang === 'en') {
-      toggle.innerHTML = '<strong>EN</strong> &middot; <a onclick="toggleLang()">ES</a>';
-    } else {
-      toggle.innerHTML = '<a onclick="toggleLang()">EN</a> &middot; <strong>ES</strong>';
+    function renderQR(elId, text, size) {
+      const el = document.getElementById(elId);
+      if (!el) return;
+      const qr = qrcode(0, 'M');
+      qr.addData(text);
+      qr.make();
+      el.innerHTML = qr.createSvgTag({ cellSize: size, margin: 2 });
     }
-  }
-</script>
+    Reveal.on('ready', () => {
+      try { renderQR('qr-linkedin', 'https://www.linkedin.com/in/felirangelp/', 3); } catch (e) {}
+      try { renderQR('qr-title', 'https://github.com/felirangelp/harness-driven-dev', 3); } catch (e) {}
+      try { renderQR('qr-final', 'https://github.com/felirangelp/harness-driven-dev', 7); } catch (e) {}
+    });
+  </script>
 </body>
 </html>
