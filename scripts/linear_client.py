@@ -10,6 +10,11 @@ Usage:
   python scripts/linear_client.py move DEMO-1 "In Progress"
   python scripts/linear_client.py comment DEMO-1 "Evidence message"
   python scripts/linear_client.py list [--state "In Progress"]
+
+Env vars (.env or shell):
+  LINEAR_API_KEY       — required
+  LINEAR_TEAM_KEY      — team prefix (e.g. HAR, DEV)
+  LINEAR_PROJECT_NAME  — if set, new issues are linked to this project
 """
 import os
 import sys
@@ -39,10 +44,10 @@ def _get_api_key():
     env_vars = _load_env()
     key = env_vars.get("LINEAR_API_KEY")
     if key:
-        # Also load team key if present
-        team_key = env_vars.get("LINEAR_TEAM_KEY")
-        if team_key and "LINEAR_TEAM_KEY" not in os.environ:
-            os.environ["LINEAR_TEAM_KEY"] = team_key
+        for var in ("LINEAR_TEAM_KEY", "LINEAR_PROJECT_NAME"):
+            value = env_vars.get(var)
+            if value and var not in os.environ:
+                os.environ[var] = value
         return key
     return os.environ.get("LINEAR_API_KEY")
 
@@ -246,7 +251,27 @@ def _get_team_id(team_key="DEMO"):
     return teams[0]["id"]
 
 
-def create_issue(title, description=None, team_key="DEMO"):
+def _get_project_id(project_name, team_id):
+    """Get project ID by name within a team. Returns id or None."""
+    result = _query("""
+        query($teamId: String!) {
+            team(id: $teamId) {
+                projects(first: 50) {
+                    nodes { id name }
+                }
+            }
+        }
+    """, {"teamId": team_id})
+    projects = result.get("data", {}).get("team", {}).get("projects", {}).get("nodes", [])
+    match = next((p for p in projects if p["name"].lower() == project_name.lower()), None)
+    if not match:
+        available = [p["name"] for p in projects]
+        print(f"Project '{project_name}' not found. Available: {available}", file=sys.stderr)
+        return None
+    return match["id"]
+
+
+def create_issue(title, description=None, team_key="DEMO", project_name=None):
     """Create a new issue in Linear. Returns the issue dict or None."""
     team_id = _get_team_id(team_key)
     if not team_id:
@@ -257,7 +282,6 @@ def create_issue(title, description=None, team_key="DEMO"):
         "teamId": team_id,
     }
 
-    # Build input fields
     input_fields = "title: $title, teamId: $teamId"
     var_defs = "$title: String!, $teamId: String!"
 
@@ -265,6 +289,13 @@ def create_issue(title, description=None, team_key="DEMO"):
         variables["description"] = description
         input_fields += ", description: $description"
         var_defs += ", $description: String"
+
+    if project_name:
+        project_id = _get_project_id(project_name, team_id)
+        if project_id:
+            variables["projectId"] = project_id
+            input_fields += ", projectId: $projectId"
+            var_defs += ", $projectId: String"
 
     result = _query(f"""
         mutation({var_defs}) {{
@@ -336,7 +367,8 @@ def main():
         title = sys.argv[2]
         description = sys.argv[3] if len(sys.argv) > 3 else None
         team_key = os.environ.get("LINEAR_TEAM_KEY", "DEMO")
-        issue = create_issue(title, description, team_key)
+        project_name = os.environ.get("LINEAR_PROJECT_NAME")
+        issue = create_issue(title, description, team_key, project_name)
         if issue:
             print(f"Created: {issue['identifier']}  {issue['title']}")
             print(f"  URL: {issue.get('url', 'N/A')}")
